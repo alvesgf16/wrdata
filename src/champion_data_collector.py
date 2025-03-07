@@ -84,7 +84,10 @@ def write_to_csv(data: list[Champion]) -> None:
             CSV format.
     """
     csv_data = [champion.to_csv_row() for champion in data]
-    with open(get_output_path(), "w", encoding="utf-8", newline="") as file:
+
+    with open(
+        Path("res", OUTPUT_FILE_NAME), "w", encoding="utf-8", newline=""
+    ) as csv_file:
         headers = [
             "Lane",
             "Champion",
@@ -94,19 +97,7 @@ def write_to_csv(data: list[Champion]) -> None:
             "Adjusted Win Rate",
             "Tier",
         ]
-        csv_writer = csv.writer(file)
+
+        csv_writer = csv.writer(csv_file)
         csv_writer.writerow(headers)
         csv_writer.writerows(csv_data)
-
-
-def get_output_path() -> Path:
-    """Constructs the output path for the CSV file.
-
-    This function determines the appropriate output path for the CSV file
-    containing champion data. It prioritizes the user's Downloads folder if
-    available; otherwise, it defaults to the user's home directory.
-
-    Returns:
-        Path: The Path object representing the output CSV file location.
-    """
-    return Path(Path.home() / "Downloads" / OUTPUT_FILE_NAME)
