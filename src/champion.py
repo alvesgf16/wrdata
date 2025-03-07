@@ -55,9 +55,9 @@ class Champion:
         return [
             self.__lane,
             self.__name,
-            self.__win_rate,
-            self.__pick_rate,
-            self.__ban_rate,
-            self.__adjusted_win_rate,
+            round(self.__win_rate, 4),
+            round(self.__pick_rate, 4),
+            round(self.__ban_rate, 4),
+            round(self.__adjusted_win_rate, 4),
             self.__tier,
         ]
