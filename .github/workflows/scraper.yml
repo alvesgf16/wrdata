@@ -32,3 +32,6 @@ jobs:
           git add .
           git commit -m "Update scraped data" || exit 0
           git push
+
+    permissions:
+      contents: write
