@@ -3,7 +3,11 @@ from itertools import groupby
 from operator import attrgetter
 from pathlib import Path
 
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -27,9 +31,38 @@ def fetch_champions() -> list[Champion]:
     Returns:
         list[Champion]: A list of Champion objects parsed from the source URL.
     """
-    with webdriver.Chrome() as driver:
+    with create_driver() as driver:
         driver.get(SOURCE_URL)
         return parse_when_ready(driver)
+
+
+def create_driver() -> WebDriver:
+    """Creates and returns a headless Chrome webdriver instance.
+
+    This function sets up a Chrome webdriver with various options,
+    including headless mode, for automated web scraping.
+
+    Returns:
+        WebDriver: A configured headless Chrome webdriver.
+    """
+    chrome_service = Service(
+        ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+    )
+
+    chrome_options = Options()
+    options = [
+        "--headless",
+        "--disable-gpu",
+        "--window-size=1920,1200",
+        "--ignore-certificate-errors",
+        "--disable-extensions",
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+    ]
+
+    for option in options:
+        chrome_options.add_argument(option)
+    return webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 
 def parse_when_ready(a_driver: WebDriver) -> list[Champion]:
