@@ -119,7 +119,7 @@ def write_to_csv(data: list[Champion]) -> None:
     csv_data = [champion.to_csv_row() for champion in data]
 
     with open(
-        Path("res", OUTPUT_FILE_NAME), "w", encoding="utf-8", newline=""
+        Path("res", OUTPUT_FILE_NAME), "w+", encoding="utf-8", newline=""
     ) as csv_file:
         headers = [
             "Lane",
