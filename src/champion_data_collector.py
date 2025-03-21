@@ -1,10 +1,16 @@
-import csv
+"""
+Champion data collection and processing module.
+
+This module handles the automated collection, processing, and analysis of
+champion data from a web source. It provides functionality for web scraping
+champion information, processing the data, and updating various metrics for
+different champion tiers and lanes.
+"""
+
 from itertools import groupby
 from operator import attrgetter
-from pathlib import Path
 
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.os_manager import ChromeType
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -13,23 +19,49 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .champion import Champion
-from .constants import OUTPUT_FILE_NAME, SOURCE_URL
-from .page_parser import PageParser
 from .champions_analyzer import ChampionsAnalyzer
+from .constants import SOURCE_URL
+from .parsers.page_parser import PageParser
+
+# from .writers.csv_writer import CsvWriter
+from .writers.xlsx_writer import XlsxWriter
 
 
 def process_champions() -> None:
-    """Processes champion data by fetching, updating, and saving it."""
-    raw_champions = fetch_champions()
-    updated_champions = update_metrics(raw_champions)
-    write_to_csv(updated_champions)
+    """Process and save champion data from the source.
+
+    This function orchestrates the complete workflow of champion data
+    processing:
+    1. Fetches champion data from the source URL
+    2. Updates metrics for each tier of champions
+    3. Saves the processed data to an Excel file
+
+    The champions are processed in tiers, and their metrics are updated
+    based on their respective lanes. The final data is written to an Excel
+    file using the XlsxWriter.
+    """
+    champions_by_tier = fetch_champions()
+
+    champions_with_metrics: list[list[Champion]] = []
+    for tier_champions in champions_by_tier:
+        tier_data = update_metrics(tier_champions)
+        champions_with_metrics.append(tier_data)
+
+    XlsxWriter().write(champions_with_metrics)
+    # CsvWriter().write(champions_with_metrics)
 
 
-def fetch_champions() -> list[Champion]:
-    """Fetches champion data from a specified source URL.
+def fetch_champions() -> list[list[Champion]]:
+    """Fetch champion data from the source URL.
+
+    This function initializes a headless Chrome webdriver, navigates to the
+    source URL, and waits for the page to load before parsing the champion
+    data. The champions are returned as a list of lists, where each inner
+    list represents a tier of champions.
 
     Returns:
-        list[Champion]: A list of Champion objects parsed from the source URL.
+        list[list[Champion]]: A list of lists containing Champion objects,
+            organized by tier.
     """
     with create_driver() as driver:
         driver.get(SOURCE_URL)
@@ -37,17 +69,21 @@ def fetch_champions() -> list[Champion]:
 
 
 def create_driver() -> WebDriver:
-    """Creates and returns a headless Chrome webdriver instance.
+    """Create and configure a headless Chrome webdriver instance.
 
-    This function sets up a Chrome webdriver with various options,
-    including headless mode, for automated web scraping.
+    Sets up a Chrome webdriver with various options optimized for web
+    scraping:
+    - Headless mode for running without a GUI
+    - Disabled GPU acceleration
+    - Set window size for consistent rendering
+    - Disabled certificate verification
+    - Disabled extensions
+    - Disabled sandbox and shared memory usage
 
     Returns:
-        WebDriver: A configured headless Chrome webdriver.
+        WebDriver: A configured headless Chrome webdriver instance.
     """
-    chrome_service = Service(
-        ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-    )
+    chrome_service = Service(ChromeDriverManager().install())
 
     chrome_options = Options()
     options = [
@@ -65,20 +101,24 @@ def create_driver() -> WebDriver:
     return webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 
-def parse_when_ready(a_driver: WebDriver) -> list[Champion]:
-    """Waits for the absence of a specific element in the web driver before
-    parsing champion data.
+def parse_when_ready(a_driver: WebDriver) -> list[list[Champion]]:
+    """Parse champion data after the page has finished loading.
 
-    This function uses a WebDriver to confirm that a specific element
-    indicating no data is absent. It then proceeds to parse and return a list
-    of champions from the page.
+    Waits for the page to be ready by checking for the absence of a
+    "nodata-text" element, then proceeds to parse the champion data from
+    the page.
 
     Args:
-        a_driver (WebDriver): The web driver instance used to interact with
-            the web page.
+        a_driver (WebDriver): The webdriver instance to use for page
+            interaction.
 
     Returns:
-        list[Champion]: A list of Champion objects parsed from the web page.
+        list[list[Champion]]: A list of lists containing Champion objects,
+            organized by tier.
+
+    Note:
+        The function will attempt to parse the page even if the wait times
+        out, ensuring data is collected even if the page load is slow.
     """
     try:
         WebDriverWait(a_driver, 10).until_not(
@@ -89,54 +129,20 @@ def parse_when_ready(a_driver: WebDriver) -> list[Champion]:
 
 
 def update_metrics(data: list[Champion]) -> list[Champion]:
-    """Update metrics for a list of champions based on lane grouping.
+    """Update metrics for champions grouped by their lane.
 
-    This function groups the provided list of Champion objects by their lane
-    attribute, analyzes each group using the ChampionsAnalyzer, and returns a
-    consolidated list of champions with updated metrics.
+    Processes a list of champions by grouping them by lane and analyzing
+    each group using the ChampionsAnalyzer. This ensures that metrics are
+    calculated appropriately within the context of each lane.
 
     Args:
-        data (list[Champion]): A list of Champion objects to be processed.
+        data (list[Champion]): A list of Champion objects to process.
 
     Returns:
-        list[Champion]: A list of champions with updated metrics after
-            analysis.
+        list[Champion]: The processed list of champions with updated
+            metrics.
     """
     result = []
     for _, champions_iterator in groupby(data, attrgetter("lane")):
         result.extend(ChampionsAnalyzer(champions_iterator).update_metrics())
     return result
-
-
-def write_to_csv(data: list[Champion]) -> None:
-    """Writes champion data to a CSV file.
-
-
-    Args:
-        data (list[Champion]): A list of Champion objects to be converted to
-            CSV format.
-    """
-    csv_data = [champion.to_csv_row() for champion in data]
-
-    with create_output_file().open(
-        "w", encoding="utf-8", newline=""
-    ) as csv_file:
-        headers = [
-            "Lane",
-            "Champion",
-            "Win Rate",
-            "Pick Rate",
-            "Ban Rate",
-            "Adjusted Win Rate",
-            "Tier",
-        ]
-
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(headers)
-        csv_writer.writerows(csv_data)
-
-
-def create_output_file() -> Path:
-    output_file = Path("res", OUTPUT_FILE_NAME)
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-    return output_file

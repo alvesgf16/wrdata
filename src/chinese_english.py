@@ -1,6 +1,6 @@
 chinese_to_english_tiers = {
-    "钻石以上": "Diamond +",
-    "大师以上": "Master +",
+    "钻石以上": "Diamond",
+    "大师以上": "Master",
     "王者": "Challenger",
     "峡谷之巅": "Legendary",
 }

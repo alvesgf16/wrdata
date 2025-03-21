@@ -1,47 +1,9 @@
-import pytest
 from unittest.mock import Mock, patch
 from selenium.webdriver import ActionChains
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from ..src.page_parser import PageParser
-from ..src.champion import Champion
-
-
-@pytest.fixture
-def mock_driver() -> Mock:
-    driver = Mock(spec=WebDriver)
-
-    # Mock date element
-    date_element = Mock()
-    date_element.get_attribute.return_value = "2024-03-15"
-    driver.find_element.return_value = date_element
-
-    return driver
-
-
-@pytest.fixture
-def mock_lane_button() -> Mock:
-    return Mock(spec=WebElement)
-
-
-@pytest.fixture
-def mock_list_items() -> list[Mock]:
-    items = [Mock(spec=WebElement) for _ in range(2)]
-
-    # Mock champion data elements
-    for item in items:
-        name_element = Mock()
-        name_element.get_attribute.return_value = "疾风剑豪"  # Yasuo in Chinese
-        item.find_element.return_value = name_element
-
-        stat_elements = [Mock() for _ in range(3)]
-        stat_elements[0].get_attribute.return_value = "52.5%"
-        stat_elements[1].get_attribute.return_value = "10.2%"
-        stat_elements[2].get_attribute.return_value = "25.3%"
-        item.find_elements.return_value = stat_elements
-
-    return items
+from src.parsers.page_parser import PageParser
+from src.champion import Champion
 
 
 def test_page_parser_initialization(
@@ -66,12 +28,17 @@ def test_parse_champions(
     data_list.find_elements.return_value = mock_list_items
     mock_driver.find_element.return_value = data_list
 
+    # Set up the lane button's class attribute
+    mock_lane_button.get_attribute.return_value = "lane-button Top"
+
     parser = PageParser(mock_driver)
     with patch(
-        "wrdata.src.page_parser.PageParser._PageParser__parse_lane_name_from_button",
+        "src.parsers.page_parser.PageParser"
+        "._PageParser__parse_lane_name_from_button",
         return_value="Top",
     ):
-        champions = parser.parse_champions()
+        champions_by_tier = parser.parse_champions()
+        champions = champions_by_tier[0]  # Get champions from first tier
 
         assert len(champions) > 0
         assert all(isinstance(champ, Champion) for champ in champions)
