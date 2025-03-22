@@ -6,7 +6,7 @@ processes and collects champion data. It provides a simple interface to
 initiate the data collection process.
 """
 
-from .src.champion_data_collector import process_champions
+from src.champion_data_collector import process_champions
 
 
 def main() -> None:

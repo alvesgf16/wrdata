@@ -13,7 +13,7 @@ from src.writers.xlsx_writer import XlsxWriter
 
 def test_complete_workflow(
     mock_driver: MagicMock,
-    test_excel_path: str,
+    test_excel_path: Path,
     sample_champion_data: list[Champion],
 ) -> None:
     """Test the complete application workflow."""
@@ -42,7 +42,7 @@ def test_complete_workflow(
         # Set up mocks
         mock_create_driver.return_value.__enter__.return_value = mock_driver
         mock_fetch.return_value = champions_by_tier
-        mock_writer.return_value = XlsxWriter(test_excel_path)
+        mock_writer.return_value = XlsxWriter(str(test_excel_path))
 
         # Run the complete process
         process_champions()
@@ -73,7 +73,7 @@ def test_error_handling(mock_driver: MagicMock) -> None:
             process_champions()
 
 
-def test_data_processing_pipeline() -> None:
+def test_data_processing_pipeline(test_excel_path: Path) -> None:
     """Test the data processing pipeline with sample data."""
     # Create sample data
     sample_data = [
@@ -87,8 +87,13 @@ def test_data_processing_pipeline() -> None:
     ]
 
     # Mock the data collection and processing
-    with patch("src.champion_data_collector.fetch_champions") as mock_fetch:
+    with patch(
+        "src.champion_data_collector.fetch_champions"
+    ) as mock_fetch, patch(
+        "src.champion_data_collector.XlsxWriter"
+    ) as mock_writer:
         mock_fetch.return_value = [sample_data]
+        mock_writer.return_value = XlsxWriter(str(test_excel_path))
 
         # Run the process
         process_champions()
@@ -97,7 +102,7 @@ def test_data_processing_pipeline() -> None:
         mock_fetch.assert_called_once()
 
 
-def test_file_output_verification(test_excel_path: str) -> None:
+def test_file_output_verification(test_excel_path: Path) -> None:
     """Test that the output file contains the correct data."""
     # Create sample data
     sample_data = [
@@ -117,7 +122,7 @@ def test_file_output_verification(test_excel_path: str) -> None:
         "src.champion_data_collector.XlsxWriter"
     ) as mock_writer:
         mock_fetch.return_value = [sample_data]
-        mock_writer.return_value = XlsxWriter(test_excel_path)
+        mock_writer.return_value = XlsxWriter(str(test_excel_path))
 
         # Run the process
         process_champions()
