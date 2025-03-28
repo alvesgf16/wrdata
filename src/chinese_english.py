@@ -95,6 +95,7 @@ chinese_to_english_champions = {
     "发条魔灵": "Orianna",
     "山隐之焰": "Ornn",
     "不屈之枪": "Pantheon",
+    "圣锤之毅": "Poppy",
     "血港鬼影": "Pyke",
     "幻翎": "Rakan",
     "披甲龙龟": "Rammus",
