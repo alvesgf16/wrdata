@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -131,10 +132,16 @@ class PageParser:
                 lane's data.
         """
         lane_name = self.__parse_lane_name_from_button()
-        return [
-            ListItemParser(lane_name, list_item).parse_champion()
-            for list_item in self.__get_data_list_items()
-        ]
+        champions = []
+        for list_item in self.__get_data_list_items():
+            try:
+                champion = ListItemParser(
+                    lane_name, list_item
+                ).parse_champion()
+                champions.append(champion)
+            except NoSuchElementException:
+                continue
+        return champions
 
     def __parse_lane_name_from_button(self) -> str:
         """Extract and format the lane name from the button's class attribute.
