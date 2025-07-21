@@ -31,6 +31,7 @@ chinese_to_english_champions = {
     "黑暗之女": "Annie",
     "寒冰射手": "Ashe",
     "铸星龙王": "Aurelion Sol",
+    "双界灵兔": "Aurora",
     "蒸汽机器人": "Blitzcrank",
     "复仇焰魂": "Brand",
     "弗雷尔卓德之心": "Braum",
