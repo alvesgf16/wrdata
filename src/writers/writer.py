@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from ..models.champion import Champion
-from ..constants import OUTPUT_FILE_NAME
+from ..config.settings import settings
 
 
 class Writer(ABC):
@@ -27,7 +27,9 @@ class Writer(ABC):
         Write champion data to a file.
     """
 
-    def __init__(self, output_file_name: str = OUTPUT_FILE_NAME) -> None:
+    def __init__(
+        self, output_file_name: str = settings.output.default_filename
+    ) -> None:
         """Initialize the writer with default tier names and headers.
 
         Sets up the writer with predefined tier names and column headers

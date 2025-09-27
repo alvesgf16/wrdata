@@ -19,7 +19,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from ..models.champion import Champion
 from .list_item_parser import ListItemParser
-from ..constants import LANE_ELEMENT_CLASS_PREFIX
+from ..config.settings import settings
 
 
 class PageParser:
@@ -153,7 +153,7 @@ class PageParser:
         lane_button = cast(WebElement, self.__button)
         lane_button_class_list = cast(str, lane_button.get_attribute("class"))
         lane_button_class = lane_button_class_list.split()[0]
-        prefix_length = len(LANE_ELEMENT_CLASS_PREFIX)
+        prefix_length = len(settings.scraping.lane_element_class_prefix)
 
         return lane_button_class[prefix_length:].capitalize()
 

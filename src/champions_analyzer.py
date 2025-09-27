@@ -12,7 +12,7 @@ from typing import Iterator
 import numpy as np
 
 from .models.champion import Champion
-from .constants import NUMBER_OF_TIERS
+from .config.settings import settings
 
 
 class ChampionsAnalyzer:
@@ -164,7 +164,7 @@ class ChampionsAnalyzer:
         )
         self.__adjusted_win_rate_spread_per_tier = (
             self.__max_adjusted_win_rate - min_adjusted_win_rate
-        ) / NUMBER_OF_TIERS
+        ) / settings.analysis.number_of_tiers
 
     def __assign_tiers(self) -> None:
         """Assign tier classifications to all champions.

@@ -20,7 +20,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from .models.champion import Champion
 from .champions_analyzer import ChampionsAnalyzer
-from .constants import SOURCE_URL
+from .config.settings import settings
 from .parsers.page_parser import PageParser
 
 # from .writers.csv_writer import CsvWriter
@@ -52,19 +52,19 @@ def process_champions() -> None:
 
 
 def fetch_champions() -> list[list[Champion]]:
-    """Fetch champion data from the source URL.
+    """Fetch champion data from the configured source URL.
 
     This function initializes a headless Chrome webdriver, navigates to the
-    source URL, and waits for the page to load before parsing the champion
-    data. The champions are returned as a list of lists, where each inner
-    list represents a tier of champions.
+    configured source URL, and waits for the page to load before parsing the
+    champion data. The champions are returned as a list of lists, where each
+    inner list represents a tier of champions.
 
     Returns:
         list[list[Champion]]: A list of lists containing Champion objects,
             organized by tier.
     """
     with create_driver() as driver:
-        driver.get(SOURCE_URL)
+        driver.get(settings.scraping.source_url)
         return parse_when_ready(driver)
 
 
@@ -86,15 +86,20 @@ def create_driver() -> WebDriver:
     chrome_service = Service(ChromeDriverManager().install())
 
     chrome_options = Options()
+    width, height = settings.scraping.window_size
+    window_size = f"--window-size={width},{height}"
+
     options = [
-        "--headless",
         "--disable-gpu",
-        "--window-size=1920,1200",
+        window_size,
         "--ignore-certificate-errors",
         "--disable-extensions",
         "--no-sandbox",
         "--disable-dev-shm-usage",
     ]
+
+    if settings.scraping.headless:
+        options.insert(0, "--headless")
 
     for option in options:
         chrome_options.add_argument(option)
@@ -121,7 +126,7 @@ def parse_when_ready(a_driver: WebDriver) -> list[list[Champion]]:
         out, ensuring data is collected even if the page load is slow.
     """
     try:
-        WebDriverWait(a_driver, 10).until_not(
+        WebDriverWait(a_driver, settings.scraping.timeout).until_not(
             EC.presence_of_element_located(("class-name", "nodata-text"))
         )
     finally:
