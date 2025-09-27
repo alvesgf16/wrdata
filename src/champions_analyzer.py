@@ -174,7 +174,8 @@ class ChampionsAnalyzer:
         uses the calculated tier boundaries and spread parameters.
         """
         for champion in self.__champions:
-            champion.tier = self.__determine_tier(champion.adjusted_win_rate)
+            tier_str = self.__determine_tier(champion.adjusted_win_rate)
+            champion.set_tier_from_string(tier_str)
 
     def __determine_tier(
         self,

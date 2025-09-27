@@ -7,6 +7,8 @@ such as win rates, pick rates, and ban rates, along with methods for
 data formatting and access.
 """
 
+from .enums import Lane, Tier
+
 
 class Champion:
     """A class representing a champion's performance data.
@@ -24,7 +26,7 @@ class Champion:
 
     def __init__(
         self,
-        lane: str,
+        lane: Lane,
         name: str,
         win_rate: float,
         pick_rate: float,
@@ -33,7 +35,7 @@ class Champion:
         """Initialize a new Champion instance.
 
         Args:
-            lane (str): The lane where the champion is played.
+            lane (Lane): The lane where the champion is played.
             name (str): The name of the champion.
             win_rate (float): The champion's win rate (0-1).
             pick_rate (float): The champion's pick rate (0-1).
@@ -45,14 +47,45 @@ class Champion:
         self.__pick_rate = pick_rate
         self.__ban_rate = ban_rate
         self.__adjusted_win_rate = 0.0
-        self.__tier = ""
+        self.__tier: Tier | None = None
+
+    @classmethod
+    def from_raw_data(
+        cls,
+        lane: str,
+        name: str,
+        win_rate: float,
+        pick_rate: float,
+        ban_rate: float,
+    ) -> "Champion":
+        """Create a Champion instance from raw string data.
+
+        This factory method converts string lane data to the appropriate
+        Lane enum value, making it easier to create Champion instances
+        from scraped or parsed data.
+
+        Args:
+            lane (str): The lane name as a string.
+            name (str): The champion's name.
+            win_rate (float): The champion's win rate (0-1).
+            pick_rate (float): The champion's pick rate (0-1).
+            ban_rate (float): The champion's ban rate (0-1).
+
+        Returns:
+            Champion: A new Champion instance.
+
+        Raises:
+            ValueError: If the lane string doesn't match any Lane enum value.
+        """
+        lane_enum = Lane(lane)
+        return cls(lane_enum, name, win_rate, pick_rate, ban_rate)
 
     @property
-    def lane(self) -> str:
+    def lane(self) -> Lane:
         """Get the lane where the champion is played.
 
         Returns:
-            str: The lane name.
+            Lane: The lane enum value.
         """
         return self.__lane
 
@@ -111,22 +144,38 @@ class Champion:
         self.__adjusted_win_rate = value
 
     @property
-    def tier(self) -> str:
+    def tier(self) -> Tier | None:
         """Get the champion's tier classification.
 
         Returns:
-            str: The tier classification (e.g., "S+", "A", "B", etc.).
+            Tier | None: The tier classification enum value, or None if not set.
         """
         return self.__tier
 
     @tier.setter
-    def tier(self, value: str) -> None:
+    def tier(self, value: Tier | None) -> None:
         """Set the champion's tier classification.
 
         Args:
-            value (str): The new tier classification.
+            value (Tier | None): The new tier classification enum value.
         """
         self.__tier = value
+
+    def set_tier_from_string(self, tier_str: str) -> None:
+        """Set the champion's tier from a string value.
+
+        This method converts string tier data to the appropriate Tier enum value.
+
+        Args:
+            tier_str (str): The tier as a string (e.g., "S+", "A", "B", etc.).
+
+        Raises:
+            ValueError: If the tier string doesn't match any Tier enum value.
+        """
+        if tier_str:
+            self.__tier = Tier(tier_str)
+        else:
+            self.__tier = None
 
     def to_csv_row(self) -> list[str | float]:
         """Convert champion data to a CSV row format.
@@ -141,13 +190,13 @@ class Champion:
                 adjusted win rate, and tier.
         """
         return [
-            self.__lane,
+            self.__lane.value,
             self.__name,
             round(self.__win_rate, 4),
             round(self.__pick_rate, 4),
             round(self.__ban_rate, 4),
             round(self.__adjusted_win_rate, 4),
-            self.__tier,
+            self.__tier.value if self.__tier else "",
         ]
 
     def __str__(self) -> str:
@@ -157,7 +206,7 @@ class Champion:
             str: A string representation of the champion's data.
         """
         return (
-            f"Champion(name='{self.__name}', lane='{self.__lane}', "
+            f"Champion(name='{self.__name}', lane='{self.__lane.value}', "
             + f"win_rate={self.__win_rate}, pick_rate={self.__pick_rate}, "
             + f"ban_rate={self.__ban_rate})"
         )

@@ -53,7 +53,7 @@ class ListItemParser:
         champion_name = self.__parse_champion_name()
         win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
 
-        return Champion(
+        return Champion.from_raw_data(
             self.__lane_name,
             champion_name,
             win_rate,
