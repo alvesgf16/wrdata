@@ -2,7 +2,7 @@
 Tests for the Champion model.
 """
 
-from src.champion import Champion
+from src.models.champion import Champion
 
 
 def test_champion_creation() -> None:

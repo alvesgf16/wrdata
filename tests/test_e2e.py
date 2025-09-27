@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from src.champion_data_collector import process_champions
-from src.champion import Champion
+from src.models.champion import Champion
 from src.writers.xlsx_writer import XlsxWriter
 
 

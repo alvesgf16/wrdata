@@ -10,7 +10,7 @@ definitions.
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from ..champion import Champion
+from ..models.champion import Champion
 from ..constants import OUTPUT_FILE_NAME
 
 

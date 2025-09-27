@@ -11,7 +11,7 @@ from typing import Iterator
 
 import numpy as np
 
-from .champion import Champion
+from .models.champion import Champion
 from .constants import NUMBER_OF_TIERS
 
 

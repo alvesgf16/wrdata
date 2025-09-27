@@ -3,7 +3,7 @@ Tests for the Champions Analyzer.
 """
 
 from src.champions_analyzer import ChampionsAnalyzer
-from src.champion import Champion
+from src.models.champion import Champion
 
 
 def test_metric_calculation(sample_champion_data: list[Champion]) -> None:

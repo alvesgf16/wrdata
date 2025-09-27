@@ -7,7 +7,7 @@ from pathlib import Path
 from xlsxwriter.exceptions import FileCreateError  # type: ignore
 
 from src.writers.xlsx_writer import XlsxWriter
-from src.champion import Champion
+from src.models.champion import Champion
 
 
 def test_xlsx_writer(

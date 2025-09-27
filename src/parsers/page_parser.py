@@ -17,7 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from ..champion import Champion
+from ..models.champion import Champion
 from .list_item_parser import ListItemParser
 from ..constants import LANE_ELEMENT_CLASS_PREFIX
 

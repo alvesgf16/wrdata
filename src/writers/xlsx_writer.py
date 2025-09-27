@@ -9,7 +9,7 @@ creation and table formatting.
 
 from xlsxwriter import Workbook  # type: ignore
 
-from ..champion import Champion
+from ..models.champion import Champion
 from .writer import Writer
 
 

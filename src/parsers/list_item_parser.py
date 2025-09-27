@@ -11,7 +11,7 @@ from typing import cast
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from ..champion import Champion
+from ..models.champion import Champion
 from ..chinese_english import (
     chinese_to_english_champions as translate_to_english,
 )

@@ -9,7 +9,7 @@ import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.champion import Champion
+from src.models.champion import Champion
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
 from src.parsers.page_parser import PageParser
-from src.champion import Champion
+from src.models.champion import Champion
 
 
 def test_page_parser_initialization(
