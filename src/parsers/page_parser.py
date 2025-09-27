@@ -18,6 +18,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from ..config.settings import settings
+from ..exceptions import ScrapingError
 from ..models.champion import Champion
 from .list_item_parser import ListItemParser
 
@@ -63,16 +64,29 @@ class PageParser:
         Returns:
             list[list[Champion]]: A list of lists containing Champion objects,
                 organized by tier.
+
+        Raises:
+            ScrapingError: If there are issues parsing champion data from
+                the page
         """
-        data: list[list[Champion]] = []
-        data.extend(
-            self.__with_button_to_click(
-                self.__driver, tier_button
-            ).__parse_champions_from_tier()
-            for tier_button in self.__get_tier_buttons()
-        )
-        print(f"Data parsed for date {self.__get_date()}")
-        return data
+        try:
+            data: list[list[Champion]] = []
+            data.extend(
+                self.__with_button_to_click(
+                    self.__driver, tier_button
+                ).__parse_champions_from_tier()
+                for tier_button in self.__get_tier_buttons()
+            )
+            print(f"Data parsed for date {self.__get_date()}")
+            return data
+        except NoSuchElementException as e:
+            raise ScrapingError(
+                "Failed to find required elements on the page", details=str(e)
+            ) from e
+        except Exception as e:
+            raise ScrapingError(
+                "Failed to parse champions from page", details=str(e)
+            ) from e
 
     def __get_date(self) -> str:
         """Retrieve the date from the data-time element.

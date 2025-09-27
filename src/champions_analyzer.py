@@ -12,6 +12,7 @@ from typing import Iterator
 import numpy as np
 
 from .config.settings import settings
+from .exceptions import DataProcessingError
 from .models.champion import Champion
 
 
@@ -54,18 +55,32 @@ class ChampionsAnalyzer:
         Returns:
             list[Champion]: The updated list of champions with adjusted
                 metrics and assigned tiers.
+
+        Raises:
+            DataProcessingError: If there are issues processing champion
+                metrics or calculating tiers
         """
-        self.__calculate_win_rate_adjustment_factor()
-        self.__calculate_adjusted_win_rates()
+        try:
+            self.__calculate_win_rate_adjustment_factor()
+            self.__calculate_adjusted_win_rates()
 
-        self.__sort_by_adjusted_win_rate()
+            self.__sort_by_adjusted_win_rate()
 
-        self.__calculate_boundaries()
-        self.__filter_lower_outliers()
-        self.__calculate_tier_determination_parameters()
-        self.__assign_tiers()
+            self.__calculate_boundaries()
+            self.__filter_lower_outliers()
+            self.__calculate_tier_determination_parameters()
+            self.__assign_tiers()
 
-        return self.__champions
+            return self.__champions
+        except (ValueError, ZeroDivisionError) as e:
+            raise DataProcessingError(
+                "Failed to calculate champion metrics", details=str(e)
+            ) from e
+        except Exception as e:
+            raise DataProcessingError(
+                "Failed to update champion metrics and assign tiers",
+                details=str(e),
+            ) from e
 
     def __calculate_win_rate_adjustment_factor(self) -> None:
         """Calculate the win rate adjustment factor based on champion

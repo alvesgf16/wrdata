@@ -9,6 +9,7 @@ creation and table formatting.
 
 from xlsxwriter import Workbook  # type: ignore
 
+from ..exceptions import OutputError
 from ..models.champion import Champion
 from .writer import Writer
 
@@ -41,11 +42,20 @@ class XlsxWriter(Writer):
             data (list[list[Champion]]): A list of lists containing
                 Champion objects, where each inner list represents a
                 specific tier.
+
+        Raises:
+            OutputError: If there are issues creating or writing to the
+                Excel file
         """
-        output_file = self._create_output_file().with_suffix(".xlsx")
-        with Workbook(output_file) as workbook:
-            for tier_name, tier_data in zip(self._tiers, data):
-                self.__write_tier_worksheet(workbook, tier_name, tier_data)
+        try:
+            output_file = self._create_output_file().with_suffix(".xlsx")
+            with Workbook(output_file) as workbook:
+                for tier_name, tier_data in zip(self._tiers, data):
+                    self.__write_tier_worksheet(workbook, tier_name, tier_data)
+        except Exception as e:
+            raise OutputError(
+                "Failed to write champion data to Excel file", details=str(e)
+            ) from e
 
     def __write_tier_worksheet(
         self,

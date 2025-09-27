@@ -14,6 +14,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from ..chinese_english import (
     chinese_to_english_champions as translate_to_english,
 )
+from ..exceptions import ScrapingError
 from ..models.champion import Champion
 
 
@@ -49,17 +50,32 @@ class ListItemParser:
             Champion: An instance of the Champion class containing the
                 parsed details including lane, name, win rate, pick rate,
                 and ban rate.
-        """
-        champion_name = self.__parse_champion_name()
-        win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
 
-        return Champion(
-            self.__lane_name,
-            champion_name,
-            win_rate,
-            pick_rate,
-            ban_rate,
-        )
+        Raises:
+            ScrapingError: If there are issues parsing champion data from
+                the web element
+        """
+        try:
+            champion_name = self.__parse_champion_name()
+            win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
+
+            return Champion(
+                self.__lane_name,
+                champion_name,
+                win_rate,
+                pick_rate,
+                ban_rate,
+            )
+        except KeyError as e:
+            raise ScrapingError(
+                f"Failed to translate champion name: {e}",
+                details="Champion name not found in translation dictionary",
+            ) from e
+        except Exception as e:
+            raise ScrapingError(
+                "Failed to parse champion data from web element",
+                details=str(e),
+            ) from e
 
     def __parse_champion_name(self) -> str:
         """Parse the champion's name from a web element.

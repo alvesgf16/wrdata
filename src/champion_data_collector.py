@@ -20,6 +20,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from .champions_analyzer import ChampionsAnalyzer
 from .config.settings import settings
+from .exceptions import ScrapingError, DataProcessingError, OutputError
 from .models.champion import Champion
 from .parsers.page_parser import PageParser
 
@@ -39,16 +40,36 @@ def process_champions() -> None:
     The champions are processed in tiers, and their metrics are updated
     based on their respective lanes. The final data is written to an Excel
     file using the XlsxWriter.
+
+    Raises:
+        ScrapingError: If there are issues fetching data from the source
+        DataProcessingError: If there are issues processing the champion data
+        OutputError: If there are issues writing the output file
     """
-    champions_by_tier = fetch_champions()
+    try:
+        champions_by_tier = fetch_champions()
+    except Exception as e:
+        raise ScrapingError(
+            "Failed to fetch champion data from source", details=str(e)
+        ) from e
 
-    champions_with_metrics: list[list[Champion]] = []
-    for tier_champions in champions_by_tier:
-        tier_data = update_metrics(tier_champions)
-        champions_with_metrics.append(tier_data)
+    try:
+        champions_with_metrics: list[list[Champion]] = []
+        for tier_champions in champions_by_tier:
+            tier_data = update_metrics(tier_champions)
+            champions_with_metrics.append(tier_data)
+    except Exception as e:
+        raise DataProcessingError(
+            "Failed to process champion metrics", details=str(e)
+        ) from e
 
-    XlsxWriter().write(champions_with_metrics)
-    # CsvWriter().write(champions_with_metrics)
+    try:
+        XlsxWriter().write(champions_with_metrics)
+        # CsvWriter().write(champions_with_metrics)
+    except Exception as e:
+        raise OutputError(
+            "Failed to write champion data to output file", details=str(e)
+        ) from e
 
 
 def fetch_champions() -> list[list[Champion]]:
@@ -62,10 +83,22 @@ def fetch_champions() -> list[list[Champion]]:
     Returns:
         list[list[Champion]]: A list of lists containing Champion objects,
             organized by tier.
+
+    Raises:
+        ScrapingError: If there are issues with webdriver operations or
+            page loading
     """
-    with create_driver() as driver:
-        driver.get(settings.scraping.source_url)
-        return parse_when_ready(driver)
+    try:
+        with create_driver() as driver:
+            driver.get(settings.scraping.source_url)
+            return parse_when_ready(driver)
+    except ScrapingError:
+        # Re-raise ScrapingError from create_driver
+        raise
+    except Exception as e:
+        raise ScrapingError(
+            "Failed to fetch champions from source URL", details=str(e)
+        ) from e
 
 
 def create_driver() -> WebDriver:
@@ -82,28 +115,38 @@ def create_driver() -> WebDriver:
 
     Returns:
         WebDriver: A configured headless Chrome webdriver instance.
+
+    Raises:
+        ScrapingError: If there are issues creating or configuring the
+            webdriver
     """
-    chrome_service = Service(ChromeDriverManager().install())
+    try:
+        chrome_service = Service(ChromeDriverManager().install())
 
-    chrome_options = Options()
-    width, height = settings.scraping.window_size
-    window_size = f"--window-size={width},{height}"
+        chrome_options = Options()
+        width, height = settings.scraping.window_size
+        window_size = f"--window-size={width},{height}"
 
-    options = [
-        "--disable-gpu",
-        window_size,
-        "--ignore-certificate-errors",
-        "--disable-extensions",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-    ]
+        options = [
+            "--disable-gpu",
+            window_size,
+            "--ignore-certificate-errors",
+            "--disable-extensions",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+        ]
 
-    if settings.scraping.headless:
-        options.insert(0, "--headless")
+        if settings.scraping.headless:
+            options.insert(0, "--headless")
 
-    for option in options:
-        chrome_options.add_argument(option)
-    return webdriver.Chrome(service=chrome_service, options=chrome_options)
+        for option in options:
+            chrome_options.add_argument(option)
+        return webdriver.Chrome(service=chrome_service, options=chrome_options)
+
+    except Exception as e:
+        raise ScrapingError(
+            "Failed to create Chrome webdriver instance", details=str(e)
+        ) from e
 
 
 def parse_when_ready(a_driver: WebDriver) -> list[list[Champion]]:

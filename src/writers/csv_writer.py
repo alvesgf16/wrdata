@@ -10,6 +10,7 @@ formatting.
 import csv
 from pathlib import Path
 
+from ..exceptions import OutputError
 from ..models.champion import Champion
 from .writer import Writer
 
@@ -43,9 +44,18 @@ class CsvWriter(Writer):
             data (list[list[Champion]]): A list of lists containing
                 Champion objects, where each inner list represents a
                 specific tier.
+
+        Raises:
+            OutputError: If there are issues creating or writing to the
+                CSV files
         """
-        for tier_name, tier_data in zip(self._tiers, data):
-            self.__write_tier_file(tier_name, tier_data)
+        try:
+            for tier_name, tier_data in zip(self._tiers, data):
+                self.__write_tier_file(tier_name, tier_data)
+        except Exception as e:
+            raise OutputError(
+                "Failed to write champion data to CSV files", details=str(e)
+            ) from e
 
     def __write_tier_file(
         self, tier_name: str, tier_data: list[Champion]
