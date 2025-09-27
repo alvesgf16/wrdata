@@ -9,6 +9,7 @@ formatting.
 
 import csv
 from pathlib import Path
+
 from ..models.champion import Champion
 from .writer import Writer
 

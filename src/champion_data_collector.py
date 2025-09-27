@@ -10,17 +10,17 @@ different champion tiers and lanes.
 from itertools import groupby
 from operator import attrgetter
 
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
-from .models.champion import Champion
 from .champions_analyzer import ChampionsAnalyzer
 from .config.settings import settings
+from .models.champion import Champion
 from .parsers.page_parser import PageParser
 
 # from .writers.csv_writer import CsvWriter
@@ -147,7 +147,7 @@ def update_metrics(data: list[Champion]) -> list[Champion]:
         list[Champion]: The processed list of champions with updated
             metrics.
     """
-    result = []
+    result: list[Champion] = []
     for _, champions_iterator in groupby(data, attrgetter("lane")):
         result.extend(ChampionsAnalyzer(champions_iterator).update_metrics())
     return result

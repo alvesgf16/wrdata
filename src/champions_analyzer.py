@@ -11,8 +11,8 @@ from typing import Iterator
 
 import numpy as np
 
-from .models.champion import Champion
 from .config.settings import settings
+from .models.champion import Champion
 
 
 class ChampionsAnalyzer:

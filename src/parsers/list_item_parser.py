@@ -11,10 +11,10 @@ from typing import cast
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from ..models.champion import Champion
 from ..chinese_english import (
     chinese_to_english_champions as translate_to_english,
 )
+from ..models.champion import Champion
 
 
 class ListItemParser:
@@ -53,7 +53,7 @@ class ListItemParser:
         champion_name = self.__parse_champion_name()
         win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
 
-        return Champion.from_raw_data(
+        return Champion(
             self.__lane_name,
             champion_name,
             win_rate,
