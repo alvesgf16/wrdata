@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run scraper
-        run: python wrdata.py
+        run: python -m src.wrdata.cli.main
 
       - name: Commit and push if changes
         run: |
