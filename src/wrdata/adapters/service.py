@@ -5,9 +5,9 @@ This module provides functionality for coordinating the output of processed
 champion data using various writers like CSV and Excel writers.
 """
 
-from ..models.champion import Champion
-from ..writers.xlsx_writer import XlsxWriter
-# from ..writers.csv_writer import CsvWriter
+from ..data.models.champion import Champion
+from .writers.xlsx_writer import XlsxWriter
+# from .writers.csv_writer import CsvWriter
 
 
 class OutputService:

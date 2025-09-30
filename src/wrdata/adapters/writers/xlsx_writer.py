@@ -9,9 +9,11 @@ creation and table formatting.
 
 from xlsxwriter import Workbook  # type: ignore
 
-from ..exceptions import OutputError
-from ..models.champion import Champion
+from ...exceptions import OutputError
+from ...data.models.champion import Champion
 from .writer import Writer
+
+TableOptions = dict[str, list[dict[str, str]] | list[list[str | float]]]
 
 
 class XlsxWriter(Writer):
@@ -79,7 +81,7 @@ class XlsxWriter(Writer):
         """
         worksheet = workbook.add_worksheet(tier_name)
 
-        table_options = {
+        table_options: TableOptions = {
             "columns": [{"header": header} for header in self._headers],
             "data": [champion.to_csv_row() for champion in tier_data],
         }
