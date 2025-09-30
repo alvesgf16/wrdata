@@ -10,7 +10,7 @@ class Lane(Enum):
     JUNGLE = "Jungle"
     MID = "Mid"
     BOT = "Bot"
-    SUPPORT = "Support"
+    SUP = "Sup"
 
 
 class Tier(Enum):
