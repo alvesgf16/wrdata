@@ -15,7 +15,7 @@ def main() -> None:
     This function initiates the champion data collection and processing
     workflow. It serves as the primary interface for users running the
     application from the command line.
-    
+
     The function coordinates the entire data pipeline:
     1. Data fetching from web sources
     2. Data processing and analysis

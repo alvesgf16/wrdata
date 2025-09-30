@@ -91,7 +91,8 @@ class ListItemParser:
         champion_name_in_chinese = str(name_element.get_attribute("innerHTML"))
         english_name = translator.translate_champion(champion_name_in_chinese)
         if english_name is None:
-            raise ScrapingError(f"Unknown champion name: {champion_name_in_chinese}")
+            raise ScrapingError(
+                f"Unknown champion name: {champion_name_in_chinese}")
         return english_name
 
     def __parse_champion_stats(self) -> tuple[float, float, float]:
