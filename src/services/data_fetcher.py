@@ -14,7 +14,7 @@ from ..config.settings import settings
 from ..exceptions import ScrapingError
 from ..models.champion import Champion
 from ..parsers.page_parser import PageParser
-from .webdriver_service import WebDriverService
+from ..config.webdriver_factory import WebDriverFactory
 
 
 class DataFetcher:
@@ -22,7 +22,7 @@ class DataFetcher:
 
     def __init__(self) -> None:
         """Initialize the data fetcher."""
-        self._webdriver_service = WebDriverService()
+        self._webdriver_service = WebDriverFactory()
 
     def fetch_champions(self) -> list[list[Champion]]:
         """Fetch champion data from the configured source URL.

@@ -1,5 +1,5 @@
 """
-WebDriver service module for browser automation.
+WebDriver factory module for browser automation.
 
 This module provides functionality for creating and managing WebDriver
 instances with proper configuration for web scraping operations.
@@ -11,12 +11,12 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-from ..config.settings import settings
+from .settings import settings
 from ..exceptions import ScrapingError
 
 
-class WebDriverService:
-    """Service for creating and managing WebDriver instances."""
+class WebDriverFactory:
+    """Factory for creating and managing WebDriver instances."""
 
     @staticmethod
     def create_driver() -> WebDriver:
