@@ -14,6 +14,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from ...i18n.translator import translator
 from ...exceptions import ScrapingError
 from ..models.champion import Champion
+from ..models.enums import Lane
 
 
 class ListItemParser:
@@ -34,7 +35,7 @@ class ListItemParser:
             a_list_item (WebElement): The web element containing the champion's
                 data.
         """
-        self.__lane_name = a_lane_name
+        self.__lane = Lane(a_lane_name)
         self.__list_item = a_list_item
 
     def parse_champion(self) -> Champion:
@@ -58,7 +59,7 @@ class ListItemParser:
             win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
 
             return Champion(
-                self.__lane_name,
+                self.__lane,
                 champion_name,
                 win_rate,
                 pick_rate,
