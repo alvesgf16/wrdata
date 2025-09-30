@@ -1,26 +1,6 @@
-chinese_to_english_tiers = {
-    "钻石以上": "Diamond",
-    "大师以上": "Master",
-    "王者": "Challenger",
-    "峡谷之巅": "Legendary",
-}
+"""Champion name translation mappings."""
 
-chinese_to_english_lanes = {
-    "上单": "Top",
-    "打野": "Jungle",
-    "中路": "Mid",
-    "下路": "Duo",
-    "辅助": "Support",
-}
-
-chinese_to_english_headers = {
-    "英雄": "Champion",
-    "胜率": "Win rate",
-    "登场率": "Pick rate",
-    "BAN率": "Ban rate",
-}
-
-chinese_to_english_champions = {
+CHAMPIONS = {
     "暗裔剑魔": "Aatrox",
     "九尾妖狐": "Ahri",
     "离群之刺": "Akali",

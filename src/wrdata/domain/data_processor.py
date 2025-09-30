@@ -8,8 +8,8 @@ coordinating with analyzers to update metrics and calculations.
 from itertools import groupby
 from operator import attrgetter
 
-from ..champions_analyzer import ChampionsAnalyzer
-from ..models.champion import Champion
+from .analyzer import ChampionsAnalyzer
+from ..data.models.champion import Champion
 
 
 class DataProcessor:

@@ -11,11 +11,10 @@ from typing import cast
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from ..chinese_english import (
-    chinese_to_english_champions as translate_to_english,
-)
-from ..exceptions import ScrapingError
+from ...i18n.translator import translator
+from ...exceptions import ScrapingError
 from ..models.champion import Champion
+from ..models.enums import Lane
 
 
 class ListItemParser:
@@ -36,7 +35,7 @@ class ListItemParser:
             a_list_item (WebElement): The web element containing the champion's
                 data.
         """
-        self.__lane_name = a_lane_name
+        self.__lane = Lane(a_lane_name)
         self.__list_item = a_list_item
 
     def parse_champion(self) -> Champion:
@@ -60,7 +59,7 @@ class ListItemParser:
             win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
 
             return Champion(
-                self.__lane_name,
+                self.__lane,
                 champion_name,
                 win_rate,
                 pick_rate,
@@ -91,7 +90,11 @@ class ListItemParser:
             By.CLASS_NAME, "hero-name"
         )
         champion_name_in_chinese = str(name_element.get_attribute("innerHTML"))
-        return translate_to_english[champion_name_in_chinese]
+        english_name = translator.translate_champion(champion_name_in_chinese)
+        if english_name is None:
+            raise ScrapingError(
+                f"Unknown champion name: {champion_name_in_chinese}")
+        return english_name
 
     def __parse_champion_stats(self) -> tuple[float, float, float]:
         """Parse the champion's statistics from web elements.

@@ -10,8 +10,8 @@ definitions.
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from ..config.settings import settings
-from ..models.champion import Champion
+from ...config.settings import settings
+from ...data.models.champion import Champion
 
 
 class Writer(ABC):
