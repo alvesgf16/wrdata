@@ -1,12 +1,15 @@
 # Development dependencies for WRData
 # Install with: pip install -r requirements-dev.txt
 
+# First install production dependencies
+-r requirements.txt
+
 # Testing
 pytest>=8.3.4
 pytest-cov>=6.0.0
 pytest-localserver>=0.9.0
 
-# Code quality
+# Code quality and linting
 mypy>=1.14.1
 black>=24.0.0
 isort>=5.13.0
@@ -21,3 +24,7 @@ sphinx-rtd-theme>=2.0.0
 
 # Utilities
 python-dotenv>=1.0.1
+
+# Additional development tools found in environment
+pylint>=3.0.0
+hypothesis>=6.0.0
