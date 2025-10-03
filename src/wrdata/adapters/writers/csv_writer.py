@@ -10,8 +10,8 @@ formatting.
 import csv
 from pathlib import Path
 
-from ..exceptions import OutputError
-from ..models.champion import Champion
+from ...data.models.champion import Champion
+from ...exceptions import OutputError
 from .writer import Writer
 
 
