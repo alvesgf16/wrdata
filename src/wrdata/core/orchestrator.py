@@ -9,7 +9,7 @@ generation.
 
 from ..exceptions import ScrapingError, DataProcessingError, OutputError
 from ..data.models.champion import Champion
-from ..data.services.data_fetcher import DataFetcher
+from ..data.data_fetcher import DataFetcher
 from ..domain.data_processor import DataProcessor
 from ..adapters.service import OutputService
 
