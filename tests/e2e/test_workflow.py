@@ -6,9 +6,9 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from src.champion_data_collector import process_champions
-from src.models.champion import Champion
-from src.models.enums import Lane
+from src.wrdata.core.orchestrator import process_champions
+from src.wrdata.data.models.champion import Champion
+from src.wrdata.data.models.enums import Lane
 
 
 def test_complete_workflow(
@@ -33,9 +33,9 @@ def test_complete_workflow(
 
     # Mock the services and data collection
     with patch(
-        "src.services.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch, patch(
-        "src.services.output_service.OutputService.write_champions"
+        "src.wrdata.adapters.service.OutputService.write_champions"
     ) as mock_writer:
         # Set up mocks
         mock_fetch.return_value = champions_by_tier
@@ -54,7 +54,7 @@ def test_error_handling(mock_driver: MagicMock) -> None:
     """Test error handling in the complete workflow."""
     # Mock data fetcher to raise an exception
     with patch(
-        "src.services.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch:
         mock_fetch.side_effect = Exception("Connection error")
 
@@ -78,7 +78,7 @@ def test_data_processing_pipeline(test_excel_path: Path) -> None:
 
     # Mock the data collection and processing
     with patch(
-        "src.services.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch:
         mock_fetch.return_value = [sample_data]
 
@@ -104,9 +104,9 @@ def test_file_output_verification(test_excel_path: Path) -> None:
 
     # Mock the data collection and output service
     with patch(
-        "src.services.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch, patch(
-        "src.services.output_service.OutputService.write_champions"
+        "src.wrdata.adapters.service.OutputService.write_champions"
     ) as mock_writer:
         mock_fetch.return_value = [sample_data]
 

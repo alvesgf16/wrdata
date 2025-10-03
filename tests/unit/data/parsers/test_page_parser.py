@@ -1,14 +1,21 @@
+"""
+Tests for the PageParser class.
+"""
+
 from unittest.mock import Mock, patch
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.parsers.page_parser import PageParser
-from src.models.champion import Champion
+from src.wrdata.data.models.champion import Champion
+from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.parsers.page_parser import PageParser
 
 
 def test_page_parser_initialization(
     mock_driver: Mock, mock_lane_button: Mock
 ) -> None:
+    """Test PageParser initialization."""
     with patch.object(ActionChains, "click") as mock_click:
         mock_click.return_value.perform.return_value = None
         PageParser(mock_driver, mock_lane_button)
@@ -18,6 +25,7 @@ def test_page_parser_initialization(
 def test_parse_champions(
     mock_driver: Mock, mock_lane_button: Mock, mock_list_items: Mock
 ) -> None:
+    """Test parsing champions from page."""
     # Mock lane buttons
     content_element = Mock(spec=WebElement)
     content_element.find_elements.return_value = [mock_lane_button]
@@ -33,13 +41,13 @@ def test_parse_champions(
 
     parser = PageParser(mock_driver)
     with patch(
-        "src.parsers.page_parser.PageParser"
+        "src.wrdata.data.parsers.page_parser.PageParser"
         "._PageParser__parse_lane_name_from_button",
-        return_value="Top",
+        return_value=Lane.TOP,
     ):
         champions_by_tier = parser.parse_champions()
         champions = champions_by_tier[0]  # Get champions from first tier
 
         assert len(champions) > 0
         assert all(isinstance(champ, Champion) for champ in champions)
-        assert champions[0].lane == "Top"
+        assert champions[0].lane == Lane.TOP

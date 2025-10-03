@@ -2,8 +2,9 @@
 Tests for the Champions Analyzer.
 """
 
-from src.champions_analyzer import ChampionsAnalyzer
-from src.models.champion import Champion
+from src.wrdata.data.models.champion import Champion
+from src.wrdata.data.models.enums import Lane
+from src.wrdata.domain.analyzer import ChampionsAnalyzer
 
 
 def test_metric_calculation(sample_champion_data: list[Champion]) -> None:
@@ -15,7 +16,7 @@ def test_metric_calculation(sample_champion_data: list[Champion]) -> None:
     # Check that metrics were updated
     for champion in updated_champions:
         assert champion.adjusted_win_rate != 0
-        assert champion.tier != ""
+        assert champion.tier is not None
 
 
 def test_lane_based_grouping() -> None:
@@ -23,21 +24,21 @@ def test_lane_based_grouping() -> None:
     champions = [
         Champion(
             name="Champ1",
-            lane="Top",
+            lane=Lane.TOP,
             win_rate=55.5,
             pick_rate=10.2,
             ban_rate=5.1,
         ),
         Champion(
             name="Champ2",
-            lane="Top",
+            lane=Lane.TOP,
             win_rate=52.3,
             pick_rate=8.7,
             ban_rate=3.2,
         ),
         Champion(
             name="Champ3",
-            lane="Jungle",
+            lane=Lane.JUNGLE,
             win_rate=54.1,
             pick_rate=9.5,
             ban_rate=4.3,
@@ -49,8 +50,8 @@ def test_lane_based_grouping() -> None:
     updated_champions = analyzer.update_metrics()
 
     # Verify champions are processed by lane
-    top_champs = [c for c in updated_champions if c.lane == "Top"]
-    jungle_champs = [c for c in updated_champions if c.lane == "Jungle"]
+    top_champs = [c for c in updated_champions if c.lane == Lane.TOP]
+    jungle_champs = [c for c in updated_champions if c.lane == Lane.JUNGLE]
 
     assert len(top_champs) == 2
     assert len(jungle_champs) == 1
@@ -60,7 +61,7 @@ def test_single_champion() -> None:
     """Test analyzer with single champion data."""
     champion = Champion(
         name="Test Champion",
-        lane="Top",
+        lane=Lane.TOP,
         win_rate=55.5,
         pick_rate=10.2,
         ban_rate=5.1,
@@ -73,4 +74,4 @@ def test_single_champion() -> None:
     assert len(result) == 1
     assert result[0] == champion
     assert result[0].adjusted_win_rate != 0
-    assert result[0].tier != ""
+    assert result[0].tier is not None

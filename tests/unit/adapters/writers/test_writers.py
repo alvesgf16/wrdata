@@ -2,12 +2,14 @@
 Tests for the data writers.
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
 from xlsxwriter.exceptions import FileCreateError  # type: ignore
 
-from src.writers.xlsx_writer import XlsxWriter
-from src.models.champion import Champion
+from src.wrdata.adapters.writers.xlsx_writer import XlsxWriter
+from src.wrdata.data.models.champion import Champion
+from src.wrdata.data.models.enums import Lane
 
 
 def test_xlsx_writer(
@@ -20,7 +22,7 @@ def test_xlsx_writer(
         [  # Tier A
             Champion(
                 name="Test Champion 3",
-                lane="Mid",
+                lane=Lane.MID,
                 win_rate=51.5,
                 pick_rate=7.8,
                 ban_rate=2.1,
@@ -53,5 +55,14 @@ def test_xlsx_writer_file_permissions(test_excel_path: Path) -> None:
     test_excel_path.touch()
     test_excel_path.chmod(0o444)  # Read-only
 
-    with pytest.raises(FileCreateError):
-        writer.write([[]])
+    # On Windows, we expect OutputError, on Unix systems, FileCreateError
+    import platform
+
+    if platform.system() == "Windows":
+        from src.wrdata.exceptions import OutputError
+
+        with pytest.raises(OutputError):
+            writer.write([[]])
+    else:
+        with pytest.raises(FileCreateError):
+            writer.write([[]])
