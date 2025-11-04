@@ -71,6 +71,7 @@ CHAMPIONS = {
     "唤潮鲛姬": "Nami",
     "沙漠死神": "Nasus",
     "深海泰坦": "Nautilus",
+    "狂野女猎手": "Nidalee",
     "不羁之悦": "Nilah",
     "永恒梦魇": "Nocturne",
     "雪原双子": "Nunu & Willump",
