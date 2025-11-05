@@ -9,8 +9,8 @@ creation and table formatting.
 
 from xlsxwriter import Workbook  # type: ignore
 
-from ...exceptions import OutputError
 from ...data.models.champion import Champion
+from ...exceptions import OutputError
 from .writer import Writer
 
 TableOptions = dict[str, list[dict[str, str]] | list[list[str | float]]]

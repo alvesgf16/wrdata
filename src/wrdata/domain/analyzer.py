@@ -12,8 +12,8 @@ from typing import Iterator
 import numpy as np
 
 from ..config.settings import settings
-from ..exceptions import DataProcessingError
 from ..data.models.champion import Champion
+from ..exceptions import DataProcessingError
 
 
 class ChampionsAnalyzer:

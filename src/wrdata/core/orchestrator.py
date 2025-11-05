@@ -7,11 +7,11 @@ between various services to handle web scraping, data processing, and output
 generation.
 """
 
-from ..exceptions import ScrapingError, DataProcessingError, OutputError
-from ..data.models.champion import Champion
-from ..data.data_fetcher import DataFetcher
-from ..domain.data_processor import DataProcessor
 from ..adapters.service import OutputService
+from ..data.data_fetcher import DataFetcher
+from ..data.models.champion import Champion
+from ..domain.data_processor import DataProcessor
+from ..exceptions import DataProcessingError, OutputError, ScrapingError
 
 
 def process_champions() -> None:

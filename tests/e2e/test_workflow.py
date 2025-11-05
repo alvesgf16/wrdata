@@ -2,9 +2,10 @@
 End-to-end tests for the WRData application.
 """
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from src.wrdata.core.orchestrator import process_champions
 from src.wrdata.data.models.champion import Champion

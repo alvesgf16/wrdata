@@ -1,7 +1,7 @@
-﻿"""Tests for CSV writer functionality."""
+"""Tests for CSV writer functionality."""
 
-from unittest.mock import patch
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 

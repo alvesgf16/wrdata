@@ -11,8 +11,8 @@ from typing import cast
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from ...i18n.translator import translator
 from ...exceptions import ScrapingError
+from ...i18n.translator import translator
 from ..models.champion import Champion
 from ..models.enums import Lane
 
