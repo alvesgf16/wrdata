@@ -33,11 +33,14 @@ def test_complete_workflow(
     ]
 
     # Mock the services and data collection
-    with patch(
-        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
-    ) as mock_fetch, patch(
-        "src.wrdata.adapters.service.OutputService.write_champions"
-    ) as mock_writer:
+    with (
+        patch(
+            "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+        ) as mock_fetch,
+        patch(
+            "src.wrdata.adapters.service.OutputService.write_champions"
+        ) as mock_writer,
+    ):
         # Set up mocks
         mock_fetch.return_value = champions_by_tier
 
@@ -104,11 +107,14 @@ def test_file_output_verification(test_excel_path: Path) -> None:
     ]
 
     # Mock the data collection and output service
-    with patch(
-        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
-    ) as mock_fetch, patch(
-        "src.wrdata.adapters.service.OutputService.write_champions"
-    ) as mock_writer:
+    with (
+        patch(
+            "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+        ) as mock_fetch,
+        patch(
+            "src.wrdata.adapters.service.OutputService.write_champions"
+        ) as mock_writer,
+    ):
         mock_fetch.return_value = [sample_data]
 
         # Run the process

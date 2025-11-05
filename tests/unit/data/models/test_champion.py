@@ -38,4 +38,3 @@ def test_champion_string_representation() -> None:
         "win_rate=55.5, pick_rate=10.2, ban_rate=5.1)"
     )
     assert str(champion) == expected
-    
