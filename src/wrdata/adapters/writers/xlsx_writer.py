@@ -9,8 +9,9 @@ creation and table formatting.
 
 from xlsxwriter import Workbook  # type: ignore
 
-from ...data.models.champion import Champion
+from ...domain.models.analyzed_champion import AnalyzedChampion
 from ...exceptions import OutputError
+from .champion_serializer import ChampionSerializer
 from .writer import Writer
 
 TableOptions = dict[str, list[dict[str, str]] | list[list[str | float]]]
@@ -33,17 +34,17 @@ class XlsxWriter(Writer):
         Write champion data to an Excel workbook with multiple worksheets.
     """
 
-    def write(self, data: list[list[Champion]]) -> None:
-        """Write champion data to an Excel workbook with multiple worksheets.
+    def write(self, data: list[list[AnalyzedChampion]]) -> None:
+        """Write champion data to an Excel workbook with worksheets.
 
         This method creates a single Excel workbook and writes the
         champion data to separate worksheets for each tier. It handles
         the workbook creation and worksheet population process.
 
         Args:
-            data (list[list[Champion]]): A list of lists containing
-                Champion objects, where each inner list represents a
-                specific tier.
+            data (list[list[AnalyzedChampion]]): A list of lists
+                containing AnalyzedChampion objects, where each inner
+                list represents a specific tier.
 
         Raises:
             OutputError: If there are issues creating or writing to the
@@ -63,7 +64,7 @@ class XlsxWriter(Writer):
         self,
         workbook: Workbook,
         tier_name: str,
-        tier_data: list[Champion],
+        tier_data: list[AnalyzedChampion],
     ) -> None:
         """Create and populate a worksheet for a single tier.
 
@@ -76,14 +77,17 @@ class XlsxWriter(Writer):
             workbook (Workbook): The Excel workbook to add the
                 worksheet to.
             tier_name (str): The name of the tier being written.
-            tier_data (list[Champion]): List of Champion objects
-                belonging to this tier.
+            tier_data (list[AnalyzedChampion]): List of AnalyzedChampion
+                objects belonging to this tier.
         """
         worksheet = workbook.add_worksheet(tier_name)
 
         table_options: TableOptions = {
             "columns": [{"header": header} for header in self._headers],
-            "data": [champion.to_csv_row() for champion in tier_data],
+            "data": [
+                ChampionSerializer.to_csv_row(champion)
+                for champion in tier_data
+            ],
         }
 
         worksheet.add_table(

@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from ...config.settings import settings
-from ...data.models.champion import Champion
+from ...domain.models.analyzed_champion import AnalyzedChampion
 
 
 class Writer(ABC):
@@ -50,17 +50,17 @@ class Writer(ABC):
         ]
 
     @abstractmethod
-    def write(self, data: list[list[Champion]]) -> None:
+    def write(self, data: list[list[AnalyzedChampion]]) -> None:
         """Write champion data to a file.
 
         This abstract method must be implemented by concrete writer
         classes to write the champion data to a specific file format.
         The data is organized as a list of lists, where each inner list
-        contains champions from a specific tier.
+        contains analyzed champions from a specific tier.
 
         Args:
-            data (list[list[Champion]]): The champion data to write,
-                organized by tiers.
+            data (list[list[AnalyzedChampion]]): The analyzed champion
+                data to write, organized by tiers.
         """
         pass
 

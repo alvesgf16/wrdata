@@ -5,7 +5,7 @@ This module provides functionality for coordinating the output of processed
 champion data using various writers like CSV and Excel writers.
 """
 
-from ..data.models.champion import Champion
+from ..domain.models.analyzed_champion import AnalyzedChampion
 from .writers.xlsx_writer import XlsxWriter
 
 # from .writers.csv_writer import CsvWriter
@@ -20,13 +20,14 @@ class OutputService:
         # self._csv_writer = CsvWriter()
 
     def write_champions(
-        self, champions_with_metrics: list[list[Champion]]
+        self, champions_with_metrics: list[list[AnalyzedChampion]]
     ) -> None:
         """Write champion data to output files.
 
         Args:
-            champions_with_metrics: A list of lists containing Champion objects
-                with updated metrics, organized by tier.
+            champions_with_metrics: A list of lists containing
+                AnalyzedChampion objects with updated metrics, organized
+                by tier.
 
         Raises:
             Exception: If there are issues writing the output files

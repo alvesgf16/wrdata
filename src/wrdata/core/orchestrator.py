@@ -9,8 +9,8 @@ generation.
 
 from ..adapters.service import OutputService
 from ..data.data_fetcher import DataFetcher
-from ..data.models.champion import Champion
 from ..domain.data_processor import DataProcessor
+from ..domain.models.analyzed_champion import AnalyzedChampion
 from ..exceptions import DataProcessingError, OutputError, ScrapingError
 
 
@@ -45,7 +45,7 @@ def process_champions() -> None:
         ) from e
 
     try:
-        champions_with_metrics: list[list[Champion]] = []
+        champions_with_metrics: list[list[AnalyzedChampion]] = []
         for tier_champions in champions_by_tier:
             tier_data = data_processor.update_metrics(tier_champions)
             champions_with_metrics.append(tier_data)

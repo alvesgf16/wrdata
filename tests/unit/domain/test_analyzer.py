@@ -71,6 +71,6 @@ def test_single_champion() -> None:
     result = analyzer.update_metrics()
 
     assert len(result) == 1
-    assert result[0] == champion
+    assert result[0].champion == champion
     assert result[0].adjusted_win_rate != 0
     assert result[0].tier is not None

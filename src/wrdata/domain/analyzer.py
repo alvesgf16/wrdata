@@ -14,6 +14,7 @@ import numpy as np
 from ..config.settings import settings
 from ..data.models.champion import Champion
 from ..exceptions import DataProcessingError
+from .models.analyzed_champion import AnalyzedChampion, Tier
 
 
 class ChampionsAnalyzer:
@@ -34,13 +35,14 @@ class ChampionsAnalyzer:
                 Champion objects to analyze.
         """
         self.__champions = list(champions_iterator)
+        self.__analyzed_champions: list[AnalyzedChampion] = []
         self.__win_rate_adjustment_factor = 0.0
         self.__lower_boundary = 0.0
         self.__upper_boundary = 0.0
         self.__max_adjusted_win_rate = 0.0
         self.__adjusted_win_rate_spread_per_tier = 0.0
 
-    def update_metrics(self) -> list[Champion]:
+    def update_metrics(self) -> list[AnalyzedChampion]:
         """Update metrics and assign tiers to the list of champions.
 
         This method orchestrates the complete analysis process:
@@ -53,7 +55,7 @@ class ChampionsAnalyzer:
         7. Assigns final tier classifications
 
         Returns:
-            list[Champion]: The updated list of champions with adjusted
+            list[AnalyzedChampion]: The analyzed champions with calculated
                 metrics and assigned tiers.
 
         Raises:
@@ -62,7 +64,7 @@ class ChampionsAnalyzer:
         """
         try:
             self.__calculate_win_rate_adjustment_factor()
-            self.__calculate_adjusted_win_rates()
+            self.__create_analyzed_champions()
 
             self.__sort_by_adjusted_win_rate()
 
@@ -71,7 +73,7 @@ class ChampionsAnalyzer:
             self.__calculate_tier_determination_parameters()
             self.__assign_tiers()
 
-            return self.__champions
+            return self.__analyzed_champions
         except (ValueError, ZeroDivisionError) as e:
             raise DataProcessingError(
                 "Failed to calculate champion metrics", details=str(e)
@@ -103,30 +105,31 @@ class ChampionsAnalyzer:
             4 * max_pick_rate
         )
 
-    def __calculate_adjusted_win_rates(self) -> None:
-        """Calculate adjusted win rates for each champion.
+    def __create_analyzed_champions(self) -> None:
+        """Create AnalyzedChampion instances with adjusted win rates.
 
-        This method applies the win rate adjustment factor to each
-        champion's win rate, taking into account their pick rate. The
-        adjustment helps normalize win rates across different pick rate
-        ranges.
-
-        Formula: adjusted_win_rate = win_rate - (adjustment_factor * pick_rate)
+        For each champion, calculates the adjusted win rate using the
+        formula: win_rate - (adjustment_factor * pick_rate)
+        The tier is initially set to None and will be assigned later.
         """
-        for champion in self.__champions:
-            champion.adjusted_win_rate = (
-                champion.win_rate
-                - self.__win_rate_adjustment_factor * champion.pick_rate
+        self.__analyzed_champions = [
+            AnalyzedChampion(
+                champion=champion,
+                adjusted_win_rate=champion.win_rate
+                - self.__win_rate_adjustment_factor * champion.pick_rate,
+                tier=None,
             )
+            for champion in self.__champions
+        ]
 
     def __sort_by_adjusted_win_rate(self) -> None:
         """Sort champions by their adjusted win rates in descending order.
 
-        This method sorts the internal list of champions based on their
-        adjusted win rates, with higher rates appearing first in the list.
+        This method sorts the internal list of analyzed champions based on
+        their adjusted win rates, with higher rates appearing first.
         """
-        self.__champions.sort(
-            key=lambda champion: champion.adjusted_win_rate, reverse=True
+        self.__analyzed_champions.sort(
+            key=lambda ac: ac.adjusted_win_rate, reverse=True
         )
 
     def __calculate_boundaries(self) -> None:
@@ -139,7 +142,7 @@ class ChampionsAnalyzer:
         - Upper: Q3 + 1.5 * IQR
         """
         q1, q3 = np.percentile(
-            [champion.adjusted_win_rate for champion in self.__champions],
+            [ac.adjusted_win_rate for ac in self.__analyzed_champions],
             [25, 75],
             method="midpoint",
         )
@@ -148,17 +151,17 @@ class ChampionsAnalyzer:
         self.__upper_boundary = q3 + 1.5 * iqr
 
     def __filter_lower_outliers(self) -> None:
-        """Remove champions with adjusted win rates below the lower boundary.
+        """Remove champions with adjusted win rates below lower boundary.
 
-        This method filters out champions whose adjusted win rates fall
-        below the calculated lower boundary, ensuring that only
+        This method filters out analyzed champions whose adjusted win rates
+        fall below the calculated lower boundary, ensuring that only
         statistically significant champions are included in the final
         analysis.
         """
-        self.__champions = [
-            champion
-            for champion in self.__champions
-            if (self.__lower_boundary <= champion.adjusted_win_rate)
+        self.__analyzed_champions = [
+            ac
+            for ac in self.__analyzed_champions
+            if (self.__lower_boundary <= ac.adjusted_win_rate)
         ]
 
     def __calculate_tier_determination_parameters(self) -> None:
@@ -170,27 +173,44 @@ class ChampionsAnalyzer:
         different tier levels.
         """
         self.__max_adjusted_win_rate = max(
-            champion.adjusted_win_rate
-            for champion in self.__champions
-            if champion.adjusted_win_rate <= self.__upper_boundary
+            ac.adjusted_win_rate
+            for ac in self.__analyzed_champions
+            if ac.adjusted_win_rate <= self.__upper_boundary
         )
         min_adjusted_win_rate = min(
-            champion.adjusted_win_rate for champion in self.__champions
+            ac.adjusted_win_rate for ac in self.__analyzed_champions
         )
         self.__adjusted_win_rate_spread_per_tier = (
             self.__max_adjusted_win_rate - min_adjusted_win_rate
         ) / settings.analysis.number_of_tiers
 
     def __assign_tiers(self) -> None:
-        """Assign tier classifications to all champions.
+        """Assign tier classifications to all analyzed champions.
 
-        This method iterates through the champions and assigns each one
-        a tier based on their adjusted win rate. The tier assignment
-        uses the calculated tier boundaries and spread parameters.
+        This method iterates through the analyzed champions and assigns
+        each one a tier based on their adjusted win rate. The tier
+        assignment uses the calculated tier boundaries and spread
+        parameters.
         """
-        for champion in self.__champions:
-            tier_str = self.__determine_tier(champion.adjusted_win_rate)
-            champion.set_tier_from_string(tier_str)
+        for i, analyzed_champion in enumerate(self.__analyzed_champions):
+            tier_str = self.__determine_tier(
+                analyzed_champion.adjusted_win_rate
+            )
+            # Convert tier string to Tier enum
+            tier_map = {
+                "S+": Tier.S_PLUS,
+                "S": Tier.S,
+                "A": Tier.A,
+                "B": Tier.B,
+                "C": Tier.C,
+                "D": Tier.D,
+            }
+            # Create new AnalyzedChampion with the tier assigned
+            self.__analyzed_champions[i] = AnalyzedChampion(
+                champion=analyzed_champion.champion,
+                adjusted_win_rate=analyzed_champion.adjusted_win_rate,
+                tier=tier_map.get(tier_str),
+            )
 
     def __determine_tier(
         self,

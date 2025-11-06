@@ -10,8 +10,9 @@ formatting.
 import csv
 from pathlib import Path
 
-from ...data.models.champion import Champion
+from ...domain.models.analyzed_champion import AnalyzedChampion
 from ...exceptions import OutputError
+from .champion_serializer import ChampionSerializer
 from .writer import Writer
 
 
@@ -32,7 +33,7 @@ class CsvWriter(Writer):
         Write champion data to separate CSV files for each tier.
     """
 
-    def write(self, data: list[list[Champion]]) -> None:
+    def write(self, data: list[list[AnalyzedChampion]]) -> None:
         """Write champion data to separate CSV files for each tier.
 
         This method processes the champion data and creates individual
@@ -41,9 +42,9 @@ class CsvWriter(Writer):
         file.
 
         Args:
-            data (list[list[Champion]]): A list of lists containing
-                Champion objects, where each inner list represents a
-                specific tier.
+            data (list[list[AnalyzedChampion]]): A list of lists
+                containing AnalyzedChampion objects, where each inner
+                list represents a specific tier.
 
         Raises:
             OutputError: If there are issues creating or writing to the
@@ -58,7 +59,7 @@ class CsvWriter(Writer):
             ) from e
 
     def __write_tier_file(
-        self, tier_name: str, tier_data: list[Champion]
+        self, tier_name: str, tier_data: list[AnalyzedChampion]
     ) -> None:
         """Write data for a single tier to a CSV file.
 
@@ -68,14 +69,14 @@ class CsvWriter(Writer):
 
         Args:
             tier_name (str): The name of the tier being written.
-            tier_data (list[Champion]): List of Champion objects
-                belonging to this tier.
+            tier_data (list[AnalyzedChampion]): List of AnalyzedChampion
+                objects belonging to this tier.
         """
         output_file = self._create_output_file(tier_name).with_suffix(".csv")
         self.__write_to_file(output_file, tier_data)
 
     def __write_to_file(
-        self, output_file: Path, tier_data: list[Champion]
+        self, output_file: Path, tier_data: list[AnalyzedChampion]
     ) -> None:
         """Write the CSV data to the specified output file.
 
@@ -86,10 +87,12 @@ class CsvWriter(Writer):
         Args:
             output_file (Path): The Path object representing the output
                 file location.
-            tier_data (list[Champion]): List of Champion objects to
-                write to the CSV file.
+            tier_data (list[AnalyzedChampion]): List of AnalyzedChampion
+                objects to write to the CSV file.
         """
-        csv_data = [champion.to_csv_row() for champion in tier_data]
+        csv_data = [
+            ChampionSerializer.to_csv_row(champion) for champion in tier_data
+        ]
 
         with output_file.open("w", encoding="utf-8", newline="") as csv_file:
             csv_writer = csv.writer(csv_file)

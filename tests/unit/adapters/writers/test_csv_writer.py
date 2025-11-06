@@ -7,45 +7,62 @@ import pytest
 
 from src.wrdata.adapters.writers.csv_writer import CsvWriter
 from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 
 @pytest.fixture
-def sample_champion_data() -> list[Champion]:
+def sample_champion_data() -> list[AnalyzedChampion]:
     """Sample champion data for testing."""
     return [
-        Champion(
-            lane=Lane.TOP,
-            name="Jinx",
-            win_rate=52.5,
-            pick_rate=12.3,
-            ban_rate=8.1,
+        AnalyzedChampion(
+            champion=Champion(
+                lane=Lane.TOP,
+                name="Jinx",
+                win_rate=52.5,
+                pick_rate=12.3,
+                ban_rate=8.1,
+            ),
+            adjusted_win_rate=53.0,
+            tier=Tier.A,
         ),
-        Champion(
-            lane=Lane.MID,
-            name="Yasuo",
-            win_rate=48.2,
-            pick_rate=15.7,
-            ban_rate=25.4,
+        AnalyzedChampion(
+            champion=Champion(
+                lane=Lane.MID,
+                name="Yasuo",
+                win_rate=48.2,
+                pick_rate=15.7,
+                ban_rate=25.4,
+            ),
+            adjusted_win_rate=49.0,
+            tier=Tier.B,
         ),
-        Champion(
-            lane=Lane.SUP,
-            name="Thresh",
-            win_rate=51.8,
-            pick_rate=8.9,
-            ban_rate=3.2,
+        AnalyzedChampion(
+            champion=Champion(
+                lane=Lane.SUP,
+                name="Thresh",
+                win_rate=51.8,
+                pick_rate=8.9,
+                ban_rate=3.2,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.A,
         ),
-        Champion(
-            lane=Lane.BOT,
-            name="Akali",
-            win_rate=47.3,
-            pick_rate=7.2,
-            ban_rate=18.5,
+        AnalyzedChampion(
+            champion=Champion(
+                lane=Lane.BOT,
+                name="Akali",
+                win_rate=47.3,
+                pick_rate=7.2,
+                ban_rate=18.5,
+            ),
+            adjusted_win_rate=48.0,
+            tier=Tier.C,
         ),
     ]
 
 
 def test_csv_writer_basic(
-    sample_champion_data: list[Champion], tmp_path: Path
+    sample_champion_data: list[AnalyzedChampion], tmp_path: Path
 ) -> None:
     """Test basic CSV writer functionality."""
     writer = CsvWriter("test_basic")
@@ -85,7 +102,7 @@ def test_csv_writer_empty_data(tmp_path: Path) -> None:
 
 
 def test_csv_writer_multiple_tiers(
-    sample_champion_data: list[Champion], tmp_path: Path
+    sample_champion_data: list[AnalyzedChampion], tmp_path: Path
 ) -> None:
     """Test CSV writer with multiple tiers."""
     writer = CsvWriter("test_multi")
@@ -115,7 +132,7 @@ def test_csv_writer_multiple_tiers(
 
 
 def test_csv_writer_headers(
-    sample_champion_data: list[Champion], tmp_path: Path
+    sample_champion_data: list[AnalyzedChampion], tmp_path: Path
 ) -> None:
     """Test that CSV files have proper headers."""
     writer = CsvWriter("test_headers")

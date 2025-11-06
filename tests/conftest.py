@@ -10,6 +10,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 
 @pytest.fixture
@@ -36,9 +37,7 @@ def mock_list_items() -> list[Mock]:
     # Mock champion data elements
     for item in items:
         name_element = Mock()
-        name_element.get_attribute.return_value = (
-            "疾风剑豪"  # Yasuo in Chinese
-        )
+        name_element.get_attribute.return_value = "疾风剑豪"  # Yasuo in Chinese
         item.find_element.return_value = name_element
 
         stat_elements = [Mock() for _ in range(3)]
@@ -51,118 +50,178 @@ def mock_list_items() -> list[Mock]:
 
 
 @pytest.fixture
-def sample_champion_data() -> list[Champion]:
+def sample_champion_data() -> list[AnalyzedChampion]:
     """Create sample champion data for testing."""
     return [
         # Top Lane Champions
-        Champion(
-            name="Darius",
-            lane=Lane.TOP,
-            win_rate=52.3,
-            pick_rate=8.7,
-            ban_rate=15.2,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Darius",
+                lane=Lane.TOP,
+                win_rate=52.3,
+                pick_rate=8.7,
+                ban_rate=15.2,
+            ),
+            adjusted_win_rate=53.0,
+            tier=Tier.A,
         ),
-        Champion(
-            name="Garen",
-            lane=Lane.TOP,
-            win_rate=51.8,
-            pick_rate=7.5,
-            ban_rate=5.1,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Garen",
+                lane=Lane.TOP,
+                win_rate=51.8,
+                pick_rate=7.5,
+                ban_rate=5.1,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.A,
         ),
-        Champion(
-            name="Sett",
-            lane=Lane.TOP,
-            win_rate=50.9,
-            pick_rate=6.8,
-            ban_rate=8.3,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Sett",
+                lane=Lane.TOP,
+                win_rate=50.9,
+                pick_rate=6.8,
+                ban_rate=8.3,
+            ),
+            adjusted_win_rate=51.5,
+            tier=Tier.B,
         ),
         # Jungle Lane Champions
-        Champion(
-            name="Lee Sin",
-            lane=Lane.JUNGLE,
-            win_rate=48.5,
-            pick_rate=12.3,
-            ban_rate=20.1,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Lee Sin",
+                lane=Lane.JUNGLE,
+                win_rate=48.5,
+                pick_rate=12.3,
+                ban_rate=20.1,
+            ),
+            adjusted_win_rate=49.0,
+            tier=Tier.C,
         ),
-        Champion(
-            name="Jarvan IV",
-            lane=Lane.JUNGLE,
-            win_rate=51.2,
-            pick_rate=9.4,
-            ban_rate=7.8,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Jarvan IV",
+                lane=Lane.JUNGLE,
+                win_rate=51.2,
+                pick_rate=9.4,
+                ban_rate=7.8,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.B,
         ),
-        Champion(
-            name="Vi",
-            lane=Lane.JUNGLE,
-            win_rate=52.7,
-            pick_rate=8.1,
-            ban_rate=4.2,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Vi",
+                lane=Lane.JUNGLE,
+                win_rate=52.7,
+                pick_rate=8.1,
+                ban_rate=4.2,
+            ),
+            adjusted_win_rate=53.0,
+            tier=Tier.A,
         ),
         # Mid Lane Champions
-        Champion(
-            name="Yasuo",
-            lane=Lane.MID,
-            win_rate=47.8,
-            pick_rate=15.6,
-            ban_rate=25.4,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Yasuo",
+                lane=Lane.MID,
+                win_rate=47.8,
+                pick_rate=15.6,
+                ban_rate=25.4,
+            ),
+            adjusted_win_rate=48.5,
+            tier=Tier.D,
         ),
-        Champion(
-            name="Zed",
-            lane=Lane.MID,
-            win_rate=49.2,
-            pick_rate=13.4,
-            ban_rate=22.8,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Zed",
+                lane=Lane.MID,
+                win_rate=49.2,
+                pick_rate=13.4,
+                ban_rate=22.8,
+            ),
+            adjusted_win_rate=50.0,
+            tier=Tier.C,
         ),
-        Champion(
-            name="Ahri",
-            lane=Lane.MID,
-            win_rate=51.5,
-            pick_rate=10.9,
-            ban_rate=8.7,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Ahri",
+                lane=Lane.MID,
+                win_rate=51.5,
+                pick_rate=10.9,
+                ban_rate=8.7,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.B,
         ),
         # Bot Lane Champions (ADCs)
-        Champion(
-            name="Jinx",
-            lane=Lane.BOT,
-            win_rate=52.1,
-            pick_rate=11.2,
-            ban_rate=6.5,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Jinx",
+                lane=Lane.BOT,
+                win_rate=52.1,
+                pick_rate=11.2,
+                ban_rate=6.5,
+            ),
+            adjusted_win_rate=53.0,
+            tier=Tier.A,
         ),
-        Champion(
-            name="Kai'Sa",
-            lane=Lane.BOT,
-            win_rate=50.8,
-            pick_rate=14.5,
-            ban_rate=12.3,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Kai'Sa",
+                lane=Lane.BOT,
+                win_rate=50.8,
+                pick_rate=14.5,
+                ban_rate=12.3,
+            ),
+            adjusted_win_rate=51.5,
+            tier=Tier.B,
         ),
-        Champion(
-            name="Ashe",
-            lane=Lane.BOT,
-            win_rate=51.4,
-            pick_rate=9.8,
-            ban_rate=3.2,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Ashe",
+                lane=Lane.BOT,
+                win_rate=51.4,
+                pick_rate=9.8,
+                ban_rate=3.2,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.B,
         ),
         # Support Lane Champions
-        Champion(
-            name="Thresh",
-            lane=Lane.SUP,
-            win_rate=49.8,
-            pick_rate=13.2,
-            ban_rate=18.9,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Thresh",
+                lane=Lane.SUP,
+                win_rate=49.8,
+                pick_rate=13.2,
+                ban_rate=18.9,
+            ),
+            adjusted_win_rate=50.5,
+            tier=Tier.C,
         ),
-        Champion(
-            name="Leona",
-            lane=Lane.SUP,
-            win_rate=51.6,
-            pick_rate=10.5,
-            ban_rate=7.4,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Leona",
+                lane=Lane.SUP,
+                win_rate=51.6,
+                pick_rate=10.5,
+                ban_rate=7.4,
+            ),
+            adjusted_win_rate=52.0,
+            tier=Tier.B,
         ),
-        Champion(
-            name="Nami",
-            lane=Lane.SUP,
-            win_rate=52.3,
-            pick_rate=8.9,
-            ban_rate=4.1,
+        AnalyzedChampion(
+            champion=Champion(
+                name="Nami",
+                lane=Lane.SUP,
+                win_rate=52.3,
+                pick_rate=8.9,
+                ban_rate=4.1,
+            ),
+            adjusted_win_rate=53.0,
+            tier=Tier.A,
         ),
     ]
 
