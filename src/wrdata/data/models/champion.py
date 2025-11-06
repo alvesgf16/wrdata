@@ -7,7 +7,28 @@ such as win rates, pick rates, and ban rates, along with methods for
 data formatting and access.
 """
 
-from .enums import Lane, Tier
+from enum import Enum
+
+
+class Lane(Enum):
+    """Lane enumeration."""
+
+    TOP = "Top"
+    JUNGLE = "Jungle"
+    MID = "Mid"
+    BOT = "Bot"
+    SUP = "Sup"
+
+
+class Tier(Enum):
+    """Tier enumeration."""
+
+    S_PLUS = "S+"
+    S = "S"
+    A = "A"
+    B = "B"
+    C = "C"
+    D = "D"
 
 
 class Champion:

@@ -9,8 +9,7 @@ import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 
 
 @pytest.fixture

@@ -2,8 +2,7 @@
 Tests for the Champion model.
 """
 
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 
 
 def test_champion_creation() -> None:

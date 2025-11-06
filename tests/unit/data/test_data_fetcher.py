@@ -7,8 +7,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from src.wrdata.data.data_fetcher import DataFetcher
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 from src.wrdata.exceptions import ScrapingError
 
 

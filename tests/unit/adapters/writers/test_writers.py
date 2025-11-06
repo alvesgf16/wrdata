@@ -8,8 +8,7 @@ import pytest
 from xlsxwriter.exceptions import FileCreateError  # type: ignore
 
 from src.wrdata.adapters.writers.xlsx_writer import XlsxWriter
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 
 
 def test_xlsx_writer(

@@ -1,6 +1,5 @@
 """Data models for WRData application."""
 
-from .champion import Champion
-from .enums import Lane, Tier
+from .champion import Champion, Lane, Tier
 
 __all__ = ["Champion", "Lane", "Tier"]

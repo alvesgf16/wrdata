@@ -2,8 +2,7 @@
 Tests for the Champions Analyzer.
 """
 
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 from src.wrdata.domain.analyzer import ChampionsAnalyzer
 
 

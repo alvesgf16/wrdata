@@ -8,8 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.wrdata.core.orchestrator import process_champions
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 
 
 def test_complete_workflow(

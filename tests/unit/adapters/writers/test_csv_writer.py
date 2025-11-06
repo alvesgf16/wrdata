@@ -6,8 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from src.wrdata.adapters.writers.csv_writer import CsvWriter
-from src.wrdata.data.models.champion import Champion
-from src.wrdata.data.models.enums import Lane
+from src.wrdata.data.models.champion import Champion, Lane
 
 
 @pytest.fixture
