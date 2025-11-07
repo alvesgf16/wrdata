@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from src.wrdata.adapters.writers.csv_writer import CsvWriter
-from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.data.domain.models.champion import Champion, Lane
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 

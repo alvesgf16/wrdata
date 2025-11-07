@@ -49,34 +49,3 @@ class Champion:
     win_rate: float
     pick_rate: float
     ban_rate: float
-
-    @classmethod
-    def from_raw_data(
-        cls,
-        lane: str,
-        name: str,
-        win_rate: float,
-        pick_rate: float,
-        ban_rate: float,
-    ) -> "Champion":
-        """Create a Champion instance from raw string data.
-
-        This factory method converts string lane data to the appropriate
-        Lane enum value, making it easier to create Champion instances
-        from scraped or parsed data.
-
-        Args:
-            lane (str): The lane name as a string.
-            name (str): The champion's name.
-            win_rate (float): The champion's win rate (0-1).
-            pick_rate (float): The champion's pick rate (0-1).
-            ban_rate (float): The champion's ban rate (0-1).
-
-        Returns:
-            Champion: A new Champion instance.
-
-        Raises:
-            ValueError: If lane string doesn't match any Lane enum.
-        """
-        lane_enum = Lane(lane)
-        return cls(lane_enum, name, win_rate, pick_rate, ban_rate)

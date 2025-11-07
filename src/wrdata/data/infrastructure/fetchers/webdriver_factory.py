@@ -11,8 +11,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-from ..config.settings import settings
-from ..exceptions import ScrapingError
+from ....config.settings import settings
+from ....exceptions import ScrapingError
 
 
 class WebDriverFactory:

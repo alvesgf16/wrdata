@@ -17,9 +17,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from ...config.settings import settings
-from ...exceptions import ScrapingError
-from ..models.champion import Champion
+from ....config.settings import settings
+from ....exceptions import ScrapingError
+from ...domain.models.champion import Champion
 from .list_item_parser import ListItemParser
 
 

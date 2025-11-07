@@ -7,8 +7,8 @@ from unittest.mock import Mock, patch
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.wrdata.data.models.champion import Champion, Lane
-from src.wrdata.data.parsers.page_parser import PageParser
+from src.wrdata.data.domain.models.champion import Champion, Lane
+from src.wrdata.data.infrastructure.parsers.page_parser import PageParser
 
 
 def test_page_parser_initialization(
@@ -40,7 +40,7 @@ def test_parse_champions(
 
     parser = PageParser(mock_driver)
     with patch(
-        "src.wrdata.data.parsers.page_parser.PageParser"
+        "src.wrdata.data.infrastructure.parsers.page_parser.PageParser"
         "._PageParser__parse_lane_name_from_button",
         return_value=Lane.TOP,
     ):

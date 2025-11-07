@@ -6,9 +6,9 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from src.wrdata.data.data_fetcher import DataFetcher
-from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.data.domain.models.champion import Champion, Lane
 from src.wrdata.exceptions import ScrapingError
+from src.wrdata.data.infrastructure.fetchers.data_fetcher import DataFetcher
 
 
 def test_data_fetcher_initialization() -> None:
@@ -18,9 +18,9 @@ def test_data_fetcher_initialization() -> None:
     assert fetcher._webdriver_service is not None
 
 
-@patch("src.wrdata.data.data_fetcher.WebDriverWait")
-@patch("src.wrdata.data.data_fetcher.PageParser")
-@patch("src.wrdata.data.data_fetcher.WebDriverFactory")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.WebDriverWait")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.PageParser")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.WebDriverFactory")
 def test_fetch_champions_success(
     mock_webdriver_factory: Mock, mock_parser_class: Mock, mock_wait: Mock
 ) -> None:
@@ -61,8 +61,8 @@ def test_fetch_champions_success(
     assert result == sample_champions
 
 
-@patch("src.wrdata.data.data_fetcher.PageParser")
-@patch("src.wrdata.data.data_fetcher.WebDriverFactory")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.PageParser")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.WebDriverFactory")
 def test_fetch_champions_parser_error(
     mock_webdriver_factory: Mock, mock_parser_class: Mock
 ) -> None:
@@ -92,8 +92,8 @@ def test_fetch_champions_parser_error(
     assert "Failed to fetch champions from source URL" in str(exc_info.value)
 
 
-@patch("src.wrdata.data.data_fetcher.PageParser")
-@patch("src.wrdata.data.data_fetcher.WebDriverFactory")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.PageParser")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.WebDriverFactory")
 def test_fetch_champions_empty_result(
     mock_webdriver_factory: Mock, mock_parser_class: Mock
 ) -> None:
@@ -121,7 +121,7 @@ def test_fetch_champions_empty_result(
     assert result == []
 
 
-@patch("src.wrdata.data.data_fetcher.WebDriverFactory")
+@patch("src.wrdata.data.infrastructure.fetchers.data_fetcher.WebDriverFactory")
 def test_fetch_champions_webdriver_error(mock_webdriver_factory: Mock) -> None:
     """Test fetch_champions when webdriver creation fails."""
     # Mock webdriver factory to raise an exception

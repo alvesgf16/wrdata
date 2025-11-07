@@ -9,7 +9,7 @@ import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.data.domain.models.champion import Champion, Lane
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 

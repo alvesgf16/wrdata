@@ -10,10 +10,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ..config.settings import settings
-from ..exceptions import ScrapingError
-from .models.champion import Champion
-from .parsers.page_parser import PageParser
+from ....config.settings import settings
+from ....exceptions import ScrapingError
+from ...domain.models.champion import Champion
+from ..parsers.page_parser import PageParser
 from .webdriver_factory import WebDriverFactory
 
 

@@ -8,7 +8,7 @@ generation.
 """
 
 from ..adapters.service import OutputService
-from ..data.data_fetcher import DataFetcher
+from ..data.infrastructure.fetchers.data_fetcher import DataFetcher
 from ..domain.data_processor import DataProcessor
 from ..domain.models.analyzed_champion import AnalyzedChampion
 from ..exceptions import DataProcessingError, OutputError, ScrapingError

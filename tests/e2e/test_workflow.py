@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.wrdata.core.orchestrator import process_champions
-from src.wrdata.data.models.champion import Champion, Lane
+from src.wrdata.data.domain.models.champion import Champion, Lane
 
 
 def test_complete_workflow(
@@ -34,7 +34,8 @@ def test_complete_workflow(
     # Mock the services and data collection
     with (
         patch(
-            "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+            "src.wrdata.data.infrastructure.fetchers."
+            "data_fetcher.DataFetcher.fetch_champions"
         ) as mock_fetch,
         patch(
             "src.wrdata.adapters.service.OutputService.write_champions"
@@ -57,7 +58,8 @@ def test_error_handling(mock_driver: MagicMock) -> None:
     """Test error handling in the complete workflow."""
     # Mock data fetcher to raise an exception
     with patch(
-        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.infrastructure.fetchers."
+        "data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch:
         mock_fetch.side_effect = Exception("Connection error")
 
@@ -81,7 +83,8 @@ def test_data_processing_pipeline(test_excel_path: Path) -> None:
 
     # Mock the data collection and processing
     with patch(
-        "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+        "src.wrdata.data.infrastructure.fetchers."
+        "data_fetcher.DataFetcher.fetch_champions"
     ) as mock_fetch:
         mock_fetch.return_value = [sample_data]
 
@@ -108,7 +111,8 @@ def test_file_output_verification(test_excel_path: Path) -> None:
     # Mock the data collection and output service
     with (
         patch(
-            "src.wrdata.data.data_fetcher.DataFetcher.fetch_champions"
+            "src.wrdata.data.infrastructure.fetchers."
+            "data_fetcher.DataFetcher.fetch_champions"
         ) as mock_fetch,
         patch(
             "src.wrdata.adapters.service.OutputService.write_champions"

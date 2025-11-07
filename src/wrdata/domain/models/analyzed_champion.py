@@ -9,7 +9,7 @@ classification. It wraps the base Champion data model with analysis results.
 from dataclasses import dataclass
 from enum import Enum
 
-from ...data.models.champion import Champion, Lane
+from ...data.domain.models.champion import Champion, Lane
 
 
 class Tier(Enum):

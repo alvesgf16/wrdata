@@ -6,13 +6,21 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from src.wrdata.data.webdriver_factory import WebDriverFactory
+from src.wrdata.data.infrastructure.fetchers.webdriver_factory import (
+    WebDriverFactory,
+)
 from src.wrdata.exceptions import ScrapingError
 
 
-@patch("src.wrdata.data.webdriver_factory.ChromeDriverManager")
-@patch("src.wrdata.data.webdriver_factory.Service")
-@patch("src.wrdata.data.webdriver_factory.webdriver.Chrome")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.ChromeDriverManager"
+)
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.Service")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.webdriver.Chrome"
+)
 def test_create_driver_success(
     mock_webdriver_chrome: Mock, mock_service: Mock, mock_driver_manager: Mock
 ) -> None:
@@ -41,7 +49,10 @@ def test_create_driver_success(
     assert driver == mock_driver
 
 
-@patch("src.wrdata.data.webdriver_factory.ChromeDriverManager")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.ChromeDriverManager"
+)
 def test_create_driver_manager_failure(mock_driver_manager: Mock) -> None:
     """Test WebDriver creation failure during driver manager setup."""
     # Mock driver manager to raise an exception
@@ -56,9 +67,15 @@ def test_create_driver_manager_failure(mock_driver_manager: Mock) -> None:
     assert "Failed to create Chrome webdriver instance" in str(exc_info.value)
 
 
-@patch("src.wrdata.data.webdriver_factory.ChromeDriverManager")
-@patch("src.wrdata.data.webdriver_factory.Service")
-@patch("src.wrdata.data.webdriver_factory.webdriver.Chrome")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.ChromeDriverManager"
+)
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.Service")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.webdriver.Chrome"
+)
 def test_create_driver_webdriver_failure(
     mock_webdriver_chrome: Mock, mock_service: Mock, mock_driver_manager: Mock
 ) -> None:
@@ -79,10 +96,16 @@ def test_create_driver_webdriver_failure(
     assert "Failed to create Chrome webdriver instance" in str(exc_info.value)
 
 
-@patch("src.wrdata.data.webdriver_factory.ChromeDriverManager")
-@patch("src.wrdata.data.webdriver_factory.Service")
-@patch("src.wrdata.data.webdriver_factory.webdriver.Chrome")
-@patch("src.wrdata.data.webdriver_factory.settings")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.ChromeDriverManager"
+)
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.Service")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.webdriver.Chrome"
+)
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.settings")
 def test_create_driver_with_custom_settings(
     mock_settings: Mock,
     mock_webdriver_chrome: Mock,
@@ -115,10 +138,16 @@ def test_create_driver_with_custom_settings(
     assert driver == mock_driver
 
 
-@patch("src.wrdata.data.webdriver_factory.ChromeDriverManager")
-@patch("src.wrdata.data.webdriver_factory.Service")
-@patch("src.wrdata.data.webdriver_factory.Options")
-@patch("src.wrdata.data.webdriver_factory.webdriver.Chrome")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.ChromeDriverManager"
+)
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.Service")
+@patch("src.wrdata.data.infrastructure.fetchers.webdriver_factory.Options")
+@patch(
+    "src.wrdata.data.infrastructure.fetchers."
+    "webdriver_factory.webdriver.Chrome"
+)
 def test_chrome_options_configuration(
     mock_webdriver_chrome: Mock,
     mock_options_class: Mock,
