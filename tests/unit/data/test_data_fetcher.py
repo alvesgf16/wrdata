@@ -7,8 +7,8 @@ from unittest.mock import Mock, patch
 import pytest
 
 from src.wrdata.data.domain.models.champion import Champion, Lane
-from src.wrdata.exceptions import ScrapingError
 from src.wrdata.data.infrastructure.fetchers.data_fetcher import DataFetcher
+from src.wrdata.exceptions import ScrapingError
 
 
 def test_data_fetcher_initialization() -> None:
