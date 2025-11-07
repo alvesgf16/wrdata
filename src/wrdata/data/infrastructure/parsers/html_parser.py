@@ -7,7 +7,7 @@ using Selenium WebDriver and the existing PageParser infrastructure.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from ...domain.models.champion import Champion
+from ...domain import Champion
 from ...domain.ports.parsers import ChampionParser
 from ..fetchers.webdriver_factory import WebDriverFactory
 from .page_parser import PageParser

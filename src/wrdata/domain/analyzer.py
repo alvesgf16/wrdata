@@ -12,7 +12,7 @@ from typing import Iterator
 import numpy as np
 
 from ..config.settings import settings
-from ..data.domain.models.champion import Champion
+from ..data import Champion
 from ..exceptions import DataProcessingError
 from .models.analyzed_champion import AnalyzedChampion, Tier
 

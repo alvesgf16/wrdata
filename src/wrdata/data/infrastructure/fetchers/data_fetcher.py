@@ -12,7 +12,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from ....config.settings import settings
 from ....exceptions import ScrapingError
-from ...domain.models.champion import Champion
+from ...domain import Champion
 from ..parsers.page_parser import PageParser
 from .webdriver_factory import WebDriverFactory
 

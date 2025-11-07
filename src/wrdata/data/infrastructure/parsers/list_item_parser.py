@@ -13,7 +13,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from ....exceptions import ScrapingError
 from ....i18n.translator import translator
-from ...domain.models.champion import Champion, Lane
+from ...domain import Champion, Lane
 
 
 class ListItemParser:

@@ -9,7 +9,7 @@ import csv
 from pathlib import Path
 
 from ....exceptions import OutputError
-from ...domain.models.champion import Champion
+from ...domain import Champion
 from ...domain.ports.repositories import ChampionRepository
 
 

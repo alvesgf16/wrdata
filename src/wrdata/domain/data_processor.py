@@ -8,7 +8,7 @@ coordinating with analyzers to update metrics and calculations.
 from itertools import groupby
 from operator import attrgetter
 
-from ..data.domain.models.champion import Champion
+from ..data import Champion
 from .analyzer import ChampionsAnalyzer
 from .models.analyzed_champion import AnalyzedChampion
 

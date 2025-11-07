@@ -19,7 +19,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from ....config.settings import settings
 from ....exceptions import ScrapingError
-from ...domain.models.champion import Champion
+from ...domain import Champion
 from .list_item_parser import ListItemParser
 
 

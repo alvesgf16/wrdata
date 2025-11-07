@@ -10,7 +10,7 @@ from pathlib import Path
 from xlsxwriter import Workbook  # type: ignore
 
 from ....exceptions import OutputError
-from ...domain.models.champion import Champion
+from ...domain import Champion
 from ...domain.ports.repositories import ChampionRepository
 
 TableOptions = dict[str, list[dict[str, str]] | list[list[str | float]]]

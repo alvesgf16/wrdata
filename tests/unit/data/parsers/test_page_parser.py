@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.wrdata.data.domain.models.champion import Champion, Lane
+from src.wrdata.data import Champion, Lane
 from src.wrdata.data.infrastructure.parsers.page_parser import PageParser
 
 

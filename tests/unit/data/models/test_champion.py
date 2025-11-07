@@ -2,7 +2,7 @@
 Tests for the Champion model.
 """
 
-from src.wrdata.data.domain.models.champion import Champion, Lane
+from src.wrdata.data import Champion, Lane
 
 
 def test_champion_creation() -> None:

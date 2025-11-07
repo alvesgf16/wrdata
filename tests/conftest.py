@@ -9,7 +9,7 @@ import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.wrdata.data.domain.models.champion import Champion, Lane
+from src.wrdata.data import Champion, Lane
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 
@@ -37,7 +37,9 @@ def mock_list_items() -> list[Mock]:
     # Mock champion data elements
     for item in items:
         name_element = Mock()
-        name_element.get_attribute.return_value = "疾风剑豪"  # Yasuo in Chinese
+        name_element.get_attribute.return_value = (
+            "疾风剑豪"  # Yasuo in Chinese
+        )
         item.find_element.return_value = name_element
 
         stat_elements = [Mock() for _ in range(3)]
