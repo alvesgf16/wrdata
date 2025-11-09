@@ -2,7 +2,7 @@
 Tests for the Champions Analyzer.
 """
 
-from src.wrdata.data import Champion, Lane
+from src.wrdata.data import Champion, Lane, RankedTier
 from src.wrdata.domain.analyzer import ChampionsAnalyzer
 
 
@@ -27,7 +27,7 @@ def test_lane_based_grouping() -> None:
             win_rate=55.5,
             pick_rate=10.2,
             ban_rate=5.1,
-            ranked_tier="Tier 1",
+            ranked_tier=RankedTier.DIAMOND_PLUS,
         ),
         Champion(
             name="Champ2",
@@ -35,7 +35,7 @@ def test_lane_based_grouping() -> None:
             win_rate=52.3,
             pick_rate=8.7,
             ban_rate=3.2,
-            ranked_tier="Tier 1",
+            ranked_tier=RankedTier.DIAMOND_PLUS,
         ),
         Champion(
             name="Champ3",
@@ -43,7 +43,7 @@ def test_lane_based_grouping() -> None:
             win_rate=54.1,
             pick_rate=9.5,
             ban_rate=4.3,
-            ranked_tier="Tier 1",
+            ranked_tier=RankedTier.DIAMOND_PLUS,
         ),
     ]
 
@@ -67,7 +67,7 @@ def test_single_champion() -> None:
         win_rate=55.5,
         pick_rate=10.2,
         ban_rate=5.1,
-        ranked_tier="Tier 1",
+        ranked_tier=RankedTier.DIAMOND_PLUS,
     )
 
     champion_iterator = iter([champion])

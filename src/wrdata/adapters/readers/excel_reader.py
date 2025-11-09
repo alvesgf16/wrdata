@@ -11,7 +11,7 @@ from typing import Any, Sequence
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from ...data import Champion, Lane
+from ...data import Champion, Lane, RankedTier
 from .reader import ChampionReader
 
 
@@ -128,7 +128,9 @@ class ExcelChampionReader(ChampionReader):
                 win_rate=float(data["Win Rate"]),
                 pick_rate=float(data["Pick Rate"]),
                 ban_rate=float(data["Ban Rate"]),
-                ranked_tier=str(data["Ranked Tier"]),
+                ranked_tier=RankedTier(
+                    str(data.get("Ranked Tier", "Diamond+"))
+                ),
             )
         except (KeyError, ValueError, TypeError) as e:
             raise ValueError(

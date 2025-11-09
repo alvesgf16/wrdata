@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.wrdata.core.orchestrator import process_champions
-from src.wrdata.data import Champion, Lane
+from src.wrdata.data import Champion, Lane, RankedTier
 
 
 def test_complete_workflow(
@@ -34,7 +34,7 @@ def test_complete_workflow(
                 win_rate=51.5,
                 pick_rate=7.8,
                 ban_rate=2.1,
-                ranked_tier="Tier 2",
+                ranked_tier=RankedTier.MASTER_PLUS,
             )
         ],
     ]
@@ -104,7 +104,7 @@ def test_data_processing_pipeline(test_excel_path: Path) -> None:
             win_rate=55.5,
             pick_rate=10.2,
             ban_rate=5.1,
-            ranked_tier="Tier 1",
+            ranked_tier=RankedTier.DIAMOND_PLUS,
         )
     ]
 
@@ -147,7 +147,7 @@ def test_file_output_verification(test_excel_path: Path) -> None:
             win_rate=55.5,
             pick_rate=10.2,
             ban_rate=5.1,
-            ranked_tier="Tier 1",
+            ranked_tier=RankedTier.DIAMOND_PLUS,
         )
     ]
 

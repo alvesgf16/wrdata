@@ -25,18 +25,43 @@ def test_parse_champions(
     mock_driver: Mock, mock_lane_button: Mock, mock_list_items: Mock
 ) -> None:
     """Test parsing champions from page."""
-    # Mock lane buttons
-    content_element = Mock(spec=WebElement)
-    content_element.find_elements.return_value = [mock_lane_button]
-    mock_driver.find_element.return_value = content_element
+    # Mock tier button
+    mock_tier_button = Mock(spec=WebElement)
+    mock_tier_button.get_attribute.return_value = (
+        "钻石+"  # Diamond+ in Chinese
+    )
+
+    # Mock tier buttons container
+    tier_buttons_container = Mock(spec=WebElement)
+    tier_buttons_container.find_elements.return_value = [mock_tier_button]
+
+    # Mock lane buttons container
+    lane_buttons_container = Mock(spec=WebElement)
+    lane_buttons_container.find_elements.return_value = [mock_lane_button]
 
     # Mock data list
     data_list = Mock(spec=WebElement)
     data_list.find_elements.return_value = mock_list_items
-    mock_driver.find_element.return_value = data_list
 
     # Set up the lane button's class attribute
     mock_lane_button.get_attribute.return_value = "lane-button Top"
+
+    # Mock date element
+    mock_date_element = Mock()
+    mock_date_element.get_attribute.return_value = "2024-03-15"
+
+    # Configure mock_driver.find_element to return appropriate elements
+    def find_element_side_effect(by: str, value: str) -> Mock:
+        if value == "dan-btn-box":  # Tier buttons container
+            return tier_buttons_container
+        elif value == "place-content":  # Lane buttons container
+            return lane_buttons_container
+        elif value == "data-time":  # Date element
+            return mock_date_element
+        else:  # Data list
+            return data_list
+
+    mock_driver.find_element.side_effect = find_element_side_effect
 
     parser = PageParser(mock_driver)
     with patch(

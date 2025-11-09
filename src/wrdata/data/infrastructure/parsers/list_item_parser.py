@@ -13,7 +13,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from ....exceptions import ScrapingError
 from ....i18n.translator import translator
-from ...domain import Champion, Lane
+from ...domain import Champion, Lane, RankedTier
 
 
 class ListItemParser:
@@ -58,6 +58,7 @@ class ListItemParser:
         try:
             champion_name = self.__parse_champion_name()
             win_rate, pick_rate, ban_rate = self.__parse_champion_stats()
+            ranked_tier = self.__parse_ranked_tier()
 
             return Champion(
                 self.__lane,
@@ -65,7 +66,7 @@ class ListItemParser:
                 win_rate,
                 pick_rate,
                 ban_rate,
-                self.__tier,
+                ranked_tier,
             )
         except KeyError as e:
             raise ScrapingError(
@@ -152,3 +153,31 @@ class ListItemParser:
             str, a_stat_element.get_attribute("innerHTML")
         )
         return float(percentage_string.strip("%")) / 100
+
+    def __parse_ranked_tier(self) -> RankedTier:
+        """Parse the ranked tier from the tier string.
+
+        Converts the tier string (e.g., "钻石+", "大师+", "超凡", "传奇")
+        to the corresponding RankedTier enum value.
+
+        Returns:
+            RankedTier: The parsed ranked tier enum value.
+
+        Raises:
+            ScrapingError: If the tier string is not recognized.
+        """
+        # Map Chinese tier names to RankedTier enum values
+        tier_mapping = {
+            "钻石+": RankedTier.DIAMOND_PLUS,
+            "大师+": RankedTier.MASTER_PLUS,
+            "超凡": RankedTier.SOVEREIGN,
+            "传奇": RankedTier.LEGENDARY,
+        }
+
+        tier = tier_mapping.get(self.__tier)
+        if tier is None:
+            raise ScrapingError(
+                f"Unknown ranked tier: {self.__tier}",
+                details="Tier name not found in mapping dictionary",
+            )
+        return tier

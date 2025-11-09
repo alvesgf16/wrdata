@@ -23,6 +23,15 @@ class Lane(Enum):
     SUP = "Sup"
 
 
+class RankedTier(Enum):
+    """Ranked tier enumeration for champion classification."""
+
+    DIAMOND_PLUS = "Diamond+"
+    MASTER_PLUS = "Master+"
+    SOVEREIGN = "Sovereign"
+    LEGENDARY = "Legendary"
+
+
 @dataclass
 class Champion:
     """A class representing scraped champion performance data.
@@ -42,7 +51,8 @@ class Champion:
         win_rate (float): The champion's win rate (0-1).
         pick_rate (float): The champion's pick rate (0-1).
         ban_rate (float): The champion's ban rate (0-1).
-        ranked_tier (str): The ranked tier classification from the website.
+        ranked_tier (RankedTier): The ranked tier classification from
+            the website.
     """
 
     lane: Lane
@@ -50,4 +60,4 @@ class Champion:
     win_rate: float
     pick_rate: float
     ban_rate: float
-    ranked_tier: str
+    ranked_tier: RankedTier

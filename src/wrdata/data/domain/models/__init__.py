@@ -1,5 +1,5 @@
 """Data models for WRData application."""
 
-from .champion import Champion, Lane
+from .champion import Champion, Lane, RankedTier
 
-__all__ = ["Champion", "Lane"]
+__all__ = ["Champion", "Lane", "RankedTier"]

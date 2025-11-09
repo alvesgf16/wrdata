@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from src.wrdata.adapters.writers.csv_writer import CsvWriter
-from src.wrdata.data import Champion, Lane
+from src.wrdata.data import Champion, Lane, RankedTier
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 
 
@@ -21,7 +21,7 @@ def sample_champion_data() -> list[AnalyzedChampion]:
                 win_rate=52.5,
                 pick_rate=12.3,
                 ban_rate=8.1,
-                ranked_tier="Tier 1",
+                ranked_tier=RankedTier.DIAMOND_PLUS,
             ),
             adjusted_win_rate=53.0,
             tier=Tier.A,
@@ -33,7 +33,7 @@ def sample_champion_data() -> list[AnalyzedChampion]:
                 win_rate=48.2,
                 pick_rate=15.7,
                 ban_rate=25.4,
-                ranked_tier="Tier 2",
+                ranked_tier=RankedTier.MASTER_PLUS,
             ),
             adjusted_win_rate=49.0,
             tier=Tier.B,
@@ -45,7 +45,7 @@ def sample_champion_data() -> list[AnalyzedChampion]:
                 win_rate=51.8,
                 pick_rate=8.9,
                 ban_rate=3.2,
-                ranked_tier="Tier 1",
+                ranked_tier=RankedTier.DIAMOND_PLUS,
             ),
             adjusted_win_rate=52.0,
             tier=Tier.A,
@@ -57,7 +57,7 @@ def sample_champion_data() -> list[AnalyzedChampion]:
                 win_rate=47.3,
                 pick_rate=7.2,
                 ban_rate=18.5,
-                ranked_tier="Tier 3",
+                ranked_tier=RankedTier.SOVEREIGN,
             ),
             adjusted_win_rate=48.0,
             tier=Tier.C,

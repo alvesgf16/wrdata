@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from src.wrdata.adapters.writers.xlsx_writer import XlsxWriter
-from src.wrdata.data import Champion, Lane
+from src.wrdata.data import Champion, Lane, RankedTier
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 from src.wrdata.exceptions import OutputError
 
@@ -27,7 +27,7 @@ def test_xlsx_writer(
                     win_rate=51.5,
                     pick_rate=7.8,
                     ban_rate=2.1,
-                    ranked_tier="Tier 2",
+                    ranked_tier=RankedTier.MASTER_PLUS,
                 ),
                 adjusted_win_rate=52.0,
                 tier=Tier.A,
