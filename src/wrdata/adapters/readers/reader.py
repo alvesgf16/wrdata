@@ -19,13 +19,12 @@ class ChampionReader(ABC):
     """
 
     @abstractmethod
-    def read(self) -> list[list[Champion]]:
+    def read(self) -> list[Champion]:
         """Read champion data from storage.
 
         Returns:
-            A nested list of Champion objects organized by tier.
-            Each inner list represents champions in a specific tier
-            (e.g., S-tier, A-tier, etc.).
+            A flat list of Champion objects with tier information
+            stored in the ranked_tier attribute.
 
         Raises:
             Exception: If there are issues reading from storage

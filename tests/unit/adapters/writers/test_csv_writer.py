@@ -79,11 +79,11 @@ def test_csv_writer_basic(
     with patch.object(
         writer, "_create_output_file", side_effect=mock_create_output_file
     ):
-        writer.write([sample_champion_data[:2]])
+        writer.write(sample_champion_data[:2])
 
-    # Check if file was created
-    expected_file = tmp_path / "test_basic_diamond.csv"
-    assert expected_file.exists()
+    # Check if file was created (tier name depends on the data)
+    csv_files = list(tmp_path.glob("test_basic_*.csv"))
+    assert len(csv_files) > 0
 
 
 def test_csv_writer_empty_data(tmp_path: Path) -> None:
@@ -119,18 +119,10 @@ def test_csv_writer_multiple_tiers(
     with patch.object(
         writer, "_create_output_file", side_effect=mock_create_output_file
     ):
-        # Split data into tiers
-        tier_data = [
-            sample_champion_data[:2],  # First tier
-            (
-                sample_champion_data[2:]
-                if len(sample_champion_data) > 2
-                else []
-            ),  # Second tier
-        ]
-        writer.write(tier_data)
+        # Write all champion data (will be grouped by tier internally)
+        writer.write(sample_champion_data)
 
-    # Check if multiple files were created
+    # Check if multiple files were created (one per tier)
     csv_files = list(tmp_path.glob("test_multi_*.csv"))
     assert len(csv_files) >= 1  # At least one file should be created
 
@@ -149,7 +141,7 @@ def test_csv_writer_headers(
     with patch.object(
         writer, "_create_output_file", side_effect=mock_create_output_file
     ):
-        writer.write([sample_champion_data[:1]])
+        writer.write(sample_champion_data[:1])
 
     # Find the created CSV file
     csv_files = list(tmp_path.glob("test_headers_*.csv"))

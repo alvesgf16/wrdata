@@ -20,14 +20,13 @@ class OutputService:
         # self._csv_writer = CsvWriter()
 
     def write_champions(
-        self, champions_with_metrics: list[list[AnalyzedChampion]]
+        self, champions_with_metrics: list[AnalyzedChampion]
     ) -> None:
         """Write champion data to output files.
 
         Args:
-            champions_with_metrics: A list of lists containing
-                AnalyzedChampion objects with updated metrics, organized
-                by tier.
+            champions_with_metrics: A flat list of AnalyzedChampion
+                objects with updated metrics.
 
         Raises:
             Exception: If there are issues writing the output files

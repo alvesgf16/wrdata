@@ -32,7 +32,12 @@ class DataProcessor:
                 champions with calculated metrics and assigned tiers.
         """
         result: list[AnalyzedChampion] = []
-        for _, champions_iterator in groupby(data, attrgetter("lane")):
-            analyzer = ChampionsAnalyzer(champions_iterator)
-            result.extend(analyzer.update_metrics())
+        # Sort by lane value before grouping (groupby requires sorted data)
+        sorted_data = sorted(data, key=lambda c: c.lane.value)
+        for _, champions_iterator in groupby(sorted_data, attrgetter("lane")):
+            # Convert iterator to list immediately to avoid consumption issues
+            lane_champions = list(champions_iterator)
+            if lane_champions:  # Skip empty groups
+                analyzer = ChampionsAnalyzer(iter(lane_champions))
+                result.extend(analyzer.update_metrics())
         return result

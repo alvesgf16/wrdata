@@ -13,11 +13,10 @@ class ChampionRepository(ABC):
     """
 
     @abstractmethod
-    def save(self, champions: list[list[Champion]]) -> None:
+    def save(self, champions: list[Champion]) -> None:
         """Save champions to persistent storage.
 
         Args:
-            champions: Champions organized by tier, where each inner list
-                contains champions from a specific tier
+            champions: A flat list of Champion objects
         """
         pass

@@ -14,14 +14,13 @@ class ChampionParser(ABC):
     """
 
     @abstractmethod
-    def parse(self, source: Any) -> list[list[Champion]]:
+    def parse(self, source: Any) -> list[Champion]:
         """Parse champions from the data source.
 
         Args:
             source: The raw data source (WebDriver, HTML, JSON, etc.)
 
         Returns:
-            Champions organized by tier, where each inner list contains
-            champions from a specific tier
+            A flat list of Champion objects
         """
         pass

@@ -23,14 +23,11 @@ class CSVChampionRepository(BaseChampionRepository):
         """
         super().__init__(filepath)
 
-    def save(self, champions: list[list[Champion]]) -> None:
+    def save(self, champions: list[Champion]) -> None:
         """Save champion data to a CSV file.
 
-        Flattens the nested list structure and writes all champions
-        to a single CSV file.
-
         Args:
-            champions: A list of lists containing Champion objects.
+            champions: A flat list of Champion objects.
 
         Raises:
             OutputError: If there are issues writing to the CSV file.
@@ -38,9 +35,7 @@ class CSVChampionRepository(BaseChampionRepository):
         try:
             self._ensure_directory_exists()
 
-            flat_champions = [champ for tier in champions for champ in tier]
-
-            self.write_to_csv(flat_champions)
+            self.write_to_csv(champions)
 
         except Exception as e:
             raise OutputError(
@@ -48,12 +43,12 @@ class CSVChampionRepository(BaseChampionRepository):
                 details=str(e),
             ) from e
 
-    def write_to_csv(self, flat_champions: list[Champion]) -> None:
+    def write_to_csv(self, champions: list[Champion]) -> None:
         with self._filepath.open(
             "w", encoding="utf-8", newline=""
         ) as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow(self._headers)
             csv_writer.writerows(
-                [self._serialize_champion(champ) for champ in flat_champions]
+                [self._serialize_champion(champ) for champ in champions]
             )

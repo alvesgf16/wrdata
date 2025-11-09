@@ -38,7 +38,7 @@ class Writer(ABC):
         and tier classification.
         """
         self._output_file_name = output_file_name
-        self._tiers = ["Diamond", "Master", "Challenger", "Legendary"]
+        self._tiers = ["S", "A", "B", "C", "D"]
         self._headers = [
             "Lane",
             "Champion",
@@ -50,17 +50,15 @@ class Writer(ABC):
         ]
 
     @abstractmethod
-    def write(self, data: list[list[AnalyzedChampion]]) -> None:
+    def write(self, data: list[AnalyzedChampion]) -> None:
         """Write champion data to a file.
 
         This abstract method must be implemented by concrete writer
         classes to write the champion data to a specific file format.
-        The data is organized as a list of lists, where each inner list
-        contains analyzed champions from a specific tier.
 
         Args:
-            data (list[list[AnalyzedChampion]]): The analyzed champion
-                data to write, organized by tiers.
+            data (list[AnalyzedChampion]): A flat list of analyzed
+                champion data to write.
         """
         pass
 

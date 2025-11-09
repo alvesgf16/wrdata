@@ -10,7 +10,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ....exceptions import OutputError
-from ...domain import Champion
+from ...domain import Champion, RankedTier
 from .base_repository import BaseChampionRepository
 
 
@@ -24,16 +24,15 @@ class ExcelChampionRepository(BaseChampionRepository):
             filepath: The path where the Excel file will be saved.
         """
         super().__init__(filepath)
-        self._tier_names = ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
 
-    def save(self, champions: list[list[Champion]]) -> None:
+    def save(self, champions: list[Champion]) -> None:
         """Save champion data to an Excel workbook.
 
-        Creates a workbook with separate worksheets for each tier.
+        Creates a workbook with separate worksheets for each ranked tier,
+        grouping champions by their ranked_tier attribute.
 
         Args:
-            champions: A list of lists containing Champion objects,
-                where each inner list represents a tier.
+            champions: A flat list of Champion objects.
 
         Raises:
             OutputError: If there are issues writing to the Excel file.
@@ -48,8 +47,18 @@ class ExcelChampionRepository(BaseChampionRepository):
                 default_sheet = workbook["Sheet"]
                 workbook.remove(default_sheet)
 
-            for tier_name, tier_data in zip(self._tier_names, champions):
-                self._write_tier_worksheet(workbook, tier_name, tier_data)
+            # Group champions by their ranked_tier attribute
+            tier_groups: dict[RankedTier, list[Champion]] = {}
+            for champion in champions:
+                if champion.ranked_tier not in tier_groups:
+                    tier_groups[champion.ranked_tier] = []
+                tier_groups[champion.ranked_tier].append(champion)
+
+            # Create a worksheet for each tier group
+            for ranked_tier, tier_champions in tier_groups.items():
+                self._write_tier_worksheet(
+                    workbook, ranked_tier.value, tier_champions
+                )
 
             workbook.save(self._filepath)
 

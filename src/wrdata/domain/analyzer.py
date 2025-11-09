@@ -172,13 +172,22 @@ class ChampionsAnalyzer:
         These parameters are used to establish the boundaries between
         different tier levels.
         """
-        self.__max_adjusted_win_rate = max(
-            ac.adjusted_win_rate
+        # Filter champions within normal range (not upper outliers)
+        champions_in_range = [
+            ac
             for ac in self.__analyzed_champions
             if ac.adjusted_win_rate <= self.__upper_boundary
+        ]
+
+        # If no champions remain after filtering, use all analyzed champions
+        if not champions_in_range:
+            champions_in_range = self.__analyzed_champions
+
+        self.__max_adjusted_win_rate = max(
+            ac.adjusted_win_rate for ac in champions_in_range
         )
         min_adjusted_win_rate = min(
-            ac.adjusted_win_rate for ac in self.__analyzed_champions
+            ac.adjusted_win_rate for ac in champions_in_range
         )
         self.__adjusted_win_rate_spread_per_tier = (
             self.__max_adjusted_win_rate - min_adjusted_win_rate

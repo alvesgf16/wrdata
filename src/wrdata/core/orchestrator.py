@@ -11,7 +11,6 @@ from ..adapters.readers.reader_factory import ChampionReaderFactory
 from ..adapters.service import OutputService
 from ..data import main as run_data_pipeline
 from ..domain.data_processor import DataProcessor
-from ..domain.models.analyzed_champion import AnalyzedChampion
 from ..exceptions import DataProcessingError, OutputError, ScrapingError
 
 
@@ -22,11 +21,11 @@ def process_champions() -> None:
     processing:
     1. Runs the data pipeline to scrape and save champions to CSV
     2. Reads champion data using the configured reader (CSV or Excel)
-    3. Updates metrics for each tier of champions
+    3. Updates metrics for all champions
     4. Saves the processed data to an Excel file
 
     The reader type is determined by the application settings. Champions
-    are processed in tiers, and their metrics are updated based on their
+    are processed together, and their metrics are updated based on their
     respective lanes. The final data is written to an Excel file using the
     available writers.
 
@@ -48,17 +47,14 @@ def process_champions() -> None:
         ) from e
 
     try:
-        champions_by_tier = champion_reader.read()
+        champions = champion_reader.read()
     except Exception as e:
         raise ScrapingError(
             "Failed to read champion data from CSV", details=str(e)
         ) from e
 
     try:
-        champions_with_metrics: list[list[AnalyzedChampion]] = []
-        for tier_champions in champions_by_tier:
-            tier_data = data_processor.update_metrics(tier_champions)
-            champions_with_metrics.append(tier_data)
+        champions_with_metrics = data_processor.update_metrics(champions)
     except Exception as e:
         raise DataProcessingError(
             "Failed to process champion metrics", details=str(e)

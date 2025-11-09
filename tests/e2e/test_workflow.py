@@ -9,12 +9,13 @@ import pytest
 
 from src.wrdata.core.orchestrator import process_champions
 from src.wrdata.data import Champion, Lane, RankedTier
+from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion
 
 
 def test_complete_workflow(
     mock_driver: MagicMock,
     test_excel_path: Path,
-    sample_champion_data: list[Champion],
+    sample_champion_data: list[AnalyzedChampion],
 ) -> None:
     """Test the complete application workflow.
 
@@ -24,19 +25,18 @@ def test_complete_workflow(
     3. Data processor processes the champions
     4. Output service writes to Excel
     """
-    # Create sample data structure
-    champions_by_tier = [
-        sample_champion_data,  # Tier S
-        [  # Tier A
-            Champion(
-                name="Test Champion 3",
-                lane=Lane.MID,
-                win_rate=51.5,
-                pick_rate=7.8,
-                ban_rate=2.1,
-                ranked_tier=RankedTier.MASTER_PLUS,
-            )
-        ],
+    # Create sample data structure (now flat list)
+    champions = [
+        sample_champion_data[0].champion,  # First champion
+        sample_champion_data[1].champion,  # Second champion
+        Champion(
+            name="Test Champion 3",
+            lane=Lane.MID,
+            win_rate=51.5,
+            pick_rate=7.8,
+            ban_rate=2.1,
+            ranked_tier=RankedTier.MASTER_PLUS,
+        ),
     ]
 
     # Mock the data pipeline and reader
@@ -54,7 +54,7 @@ def test_complete_workflow(
     ):
         # Set up mock reader
         mock_reader = MagicMock()
-        mock_reader.read.return_value = champions_by_tier
+        mock_reader.read.return_value = champions
         mock_factory.return_value = mock_reader
 
         # Run the complete process
@@ -120,7 +120,7 @@ def test_data_processing_pipeline(test_excel_path: Path) -> None:
     ):
         # Set up mock reader
         mock_reader = MagicMock()
-        mock_reader.read.return_value = [sample_data]
+        mock_reader.read.return_value = sample_data
         mock_factory.return_value = mock_reader
 
         # Run the process
@@ -166,7 +166,7 @@ def test_file_output_verification(test_excel_path: Path) -> None:
     ):
         # Set up mock reader
         mock_reader = MagicMock()
-        mock_reader.read.return_value = [sample_data]
+        mock_reader.read.return_value = sample_data
         mock_factory.return_value = mock_reader
 
         # Run the process

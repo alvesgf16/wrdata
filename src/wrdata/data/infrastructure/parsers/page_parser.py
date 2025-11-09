@@ -59,31 +59,30 @@ class PageParser:
         if a_button is not None:
             ActionChains(a_driver).click(a_button).perform()
 
-    def parse_champions(self) -> list[list[Champion]]:
-        """Retrieve champion data organized by tiers.
+    def parse_champions(self) -> list[Champion]:
+        """Retrieve champion data as a flat list.
 
         This method processes the page by iterating through tier buttons and
-        collecting champion data for each tier. The data is organized as a
-        list of lists, where each inner list contains champions from a
-        specific tier.
+        collecting champion data for each tier. All champions are returned
+        in a single flat list with tier information stored in the
+        ranked_tier attribute.
 
         Returns:
-            list[list[Champion]]: A list of lists containing Champion objects,
-                organized by tier.
+            list[Champion]: A flat list of Champion objects.
 
         Raises:
             ScrapingError: If there are issues parsing champion data from
                 the page
         """
         try:
-            data: list[list[Champion]] = []
+            data: list[Champion] = []
             tier_buttons = self.__get_tier_buttons()
             for tier_button in tier_buttons:
                 tier_name = self.__parse_tier_name_from_button(tier_button)
                 tier_champions = self.__with_button_to_click(
                     self.__driver, tier_button, tier_name
                 ).__parse_champions_from_tier()
-                data.append(tier_champions)
+                data.extend(tier_champions)
             print(f"Data parsed for date {self.__get_date()}")
             return data
         except NoSuchElementException as e:

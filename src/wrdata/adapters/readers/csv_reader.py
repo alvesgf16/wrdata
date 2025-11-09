@@ -28,17 +28,14 @@ class CSVChampionReader(ChampionReader):
         """
         self._filepath = Path(filepath)
 
-    def read(self) -> list[list[Champion]]:
+    def read(self) -> list[Champion]:
         """Read champion data from the CSV file.
 
-        Parses the CSV file and reconstructs Champion objects.
-        Since the CSV format flattens tiers, this returns all
-        champions in a single list wrapped in another list.
+        Parses the CSV file and reconstructs Champion objects
+        with tier information from the ranked_tier column.
 
         Returns:
-            A list containing one list of all Champion objects.
-            The nested structure maintains consistency with the
-            interface, though CSV doesn't preserve tier information.
+            A flat list of Champion objects.
 
         Raises:
             FileNotFoundError: If the CSV file doesn't exist.
@@ -58,10 +55,7 @@ class CSVChampionReader(ChampionReader):
                     champion = self._deserialize_champion(row)
                     champions.append(champion)
 
-            # TODO: After refactoring is complete, update CSV format to
-            # preserve tier information (add tier column) so champions
-            # can be properly grouped when reading back
-            return [champions] if champions else []
+            return champions
 
         except Exception as e:
             raise Exception(

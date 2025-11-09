@@ -24,7 +24,7 @@ class HTMLChampionParser(ChampionParser):
         """Initialize the HTML champion parser."""
         self._webdriver_factory = WebDriverFactory()
 
-    def parse(self, source: str) -> list[list[Champion]]:
+    def parse(self, source: str) -> list[Champion]:
         """Parse champion data from URL or HTML source.
 
         This implementation uses a WebDriver to load and interact with the
@@ -35,7 +35,7 @@ class HTMLChampionParser(ChampionParser):
             source: The URL or HTML source code to parse.
 
         Returns:
-            A list of lists containing Champion objects, organized by tier.
+            A flat list of Champion objects.
 
         Raises:
             ScrapingError: If there are issues parsing the content.

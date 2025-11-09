@@ -34,15 +34,15 @@ class ExcelChampionReader(ChampionReader):
         """
         self._filepath = Path(filepath)
 
-    def read(self) -> list[list[Champion]]:
+    def read(self) -> list[Champion]:
         """Read champion data from the Excel file.
 
-        Parses each worksheet as a tier and reconstructs Champion objects
-        organized by tier. Each worksheet represents one tier of champions.
+        Parses all worksheets and reconstructs Champion objects.
+        Each worksheet may represent a different tier group, but
+        all champions are returned in a single flat list.
 
         Returns:
-            A list of lists containing Champion objects, where each
-            inner list represents champions from one worksheet (tier).
+            A flat list of Champion objects from all worksheets.
 
         Raises:
             ImportError: If openpyxl is not installed.
@@ -55,16 +55,15 @@ class ExcelChampionReader(ChampionReader):
 
         try:
             workbook = load_workbook(self._filepath, data_only=True)
-            champions_by_tier: list[list[Champion]] = []
+            all_champions: list[Champion] = []
 
             for sheet_name in workbook.sheetnames:
                 sheet = workbook[sheet_name]
                 tier_champions = self._read_worksheet(sheet)
-                if tier_champions:
-                    champions_by_tier.append(tier_champions)
+                all_champions.extend(tier_champions)
 
             workbook.close()
-            return champions_by_tier
+            return all_champions
 
         except Exception as e:
             raise Exception(

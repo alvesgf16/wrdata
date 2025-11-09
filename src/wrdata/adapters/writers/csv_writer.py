@@ -33,25 +33,32 @@ class CsvWriter(Writer):
         Write champion data to separate CSV files for each tier.
     """
 
-    def write(self, data: list[list[AnalyzedChampion]]) -> None:
+    def write(self, data: list[AnalyzedChampion]) -> None:
         """Write champion data to separate CSV files for each tier.
 
         This method processes the champion data and creates individual
-        CSV files for each tier. It iterates through the tiers and
-        their corresponding champion data, writing each to a separate
-        file.
+        CSV files for each tier. Champions are automatically grouped
+        by their tier attribute.
 
         Args:
-            data (list[list[AnalyzedChampion]]): A list of lists
-                containing AnalyzedChampion objects, where each inner
-                list represents a specific tier.
+            data (list[AnalyzedChampion]): A flat list of
+                AnalyzedChampion objects.
 
         Raises:
             OutputError: If there are issues creating or writing to the
                 CSV files
         """
         try:
-            for tier_name, tier_data in zip(self._tiers, data):
+            # Group champions by tier
+            tier_groups: dict[str, list[AnalyzedChampion]] = {}
+            for champion in data:
+                tier_name = champion.tier.name if champion.tier else "Unranked"
+                if tier_name not in tier_groups:
+                    tier_groups[tier_name] = []
+                tier_groups[tier_name].append(champion)
+
+            # Write a file for each tier group
+            for tier_name, tier_data in tier_groups.items():
                 self.__write_tier_file(tier_name, tier_data)
         except Exception as e:
             raise OutputError(

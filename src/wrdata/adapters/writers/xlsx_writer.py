@@ -34,17 +34,16 @@ class XlsxWriter(Writer):
         Write champion data to an Excel workbook with multiple worksheets.
     """
 
-    def write(self, data: list[list[AnalyzedChampion]]) -> None:
+    def write(self, data: list[AnalyzedChampion]) -> None:
         """Write champion data to an Excel workbook with worksheets.
 
         This method creates a single Excel workbook and writes the
-        champion data to separate worksheets for each tier. It handles
-        the workbook creation and worksheet population process.
+        champion data to separate worksheets for each tier. Champions
+        are automatically grouped by their tier attribute.
 
         Args:
-            data (list[list[AnalyzedChampion]]): A list of lists
-                containing AnalyzedChampion objects, where each inner
-                list represents a specific tier.
+            data (list[AnalyzedChampion]): A flat list of
+                AnalyzedChampion objects.
 
         Raises:
             OutputError: If there are issues creating or writing to the
@@ -59,10 +58,23 @@ class XlsxWriter(Writer):
                 default_sheet = workbook["Sheet"]
                 workbook.remove(default_sheet)
 
-            # Write tier worksheets or keep default empty sheet
+            # Group champions by tier
             if data:
-                for tier_name, tier_data in zip(self._tiers, data):
-                    self.__write_tier_worksheet(workbook, tier_name, tier_data)
+                tier_groups: dict[str, list[AnalyzedChampion]] = {}
+                for champion in data:
+                    tier_name = (
+                        champion.tier.name if champion.tier else "Unranked"
+                    )
+                    if tier_name not in tier_groups:
+                        tier_groups[tier_name] = []
+                    tier_groups[tier_name].append(champion)
+
+                # Write a worksheet for each tier group
+                for tier_name in self._tiers:
+                    if tier_name in tier_groups:
+                        self.__write_tier_worksheet(
+                            workbook, tier_name, tier_groups[tier_name]
+                        )
 
             workbook.save(output_file)
         except Exception as e:

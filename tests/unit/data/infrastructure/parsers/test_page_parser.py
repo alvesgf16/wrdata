@@ -69,8 +69,7 @@ def test_parse_champions(
         "._PageParser__parse_lane_name_from_button",
         return_value=Lane.TOP,
     ):
-        champions_by_tier = parser.parse_champions()
-        champions = champions_by_tier[0]  # Get champions from first tier
+        champions = parser.parse_champions()
 
         assert len(champions) > 0
         assert all(isinstance(champ, Champion) for champ in champions)
