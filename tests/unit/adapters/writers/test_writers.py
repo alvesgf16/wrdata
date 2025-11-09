@@ -27,6 +27,7 @@ def test_xlsx_writer(
                     win_rate=51.5,
                     pick_rate=7.8,
                     ban_rate=2.1,
+                    ranked_tier="Tier 2",
                 ),
                 adjusted_win_rate=52.0,
                 tier=Tier.A,

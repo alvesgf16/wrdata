@@ -128,6 +128,7 @@ class ExcelChampionReader(ChampionReader):
                 win_rate=float(data["Win Rate"]),
                 pick_rate=float(data["Pick Rate"]),
                 ban_rate=float(data["Ban Rate"]),
+                ranked_tier=str(data["Ranked Tier"]),
             )
         except (KeyError, ValueError, TypeError) as e:
             raise ValueError(

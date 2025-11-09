@@ -87,6 +87,7 @@ class CSVChampionReader(ChampionReader):
                 win_rate=float(row["Win Rate"]),
                 pick_rate=float(row["Pick Rate"]),
                 ban_rate=float(row["Ban Rate"]),
+                ranked_tier=row["Ranked Tier"],
             )
         except (KeyError, ValueError) as e:
             raise ValueError(f"Invalid CSV row data: {row}. Error: {e}") from e

@@ -25,7 +25,7 @@ class ListItemParser:
         Create a Champion object from parsed champion details.
     """
 
-    def __init__(self, a_lane_name: str, a_list_item: WebElement):
+    def __init__(self, a_lane_name: str, a_list_item: WebElement, a_tier: str):
         """Initialize the champion parser.
 
         Args:
@@ -33,9 +33,11 @@ class ListItemParser:
                 champion.
             a_list_item (WebElement): The web element containing the champion's
                 data.
+            a_tier (str): The tier classification for the champion.
         """
         self.__lane = Lane(a_lane_name)
         self.__list_item = a_list_item
+        self.__tier = a_tier
 
     def parse_champion(self) -> Champion:
         """Create a Champion object from parsed champion details.
@@ -63,6 +65,7 @@ class ListItemParser:
                 win_rate,
                 pick_rate,
                 ban_rate,
+                self.__tier,
             )
         except KeyError as e:
             raise ScrapingError(

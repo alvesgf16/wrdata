@@ -27,6 +27,7 @@ def test_lane_based_grouping() -> None:
             win_rate=55.5,
             pick_rate=10.2,
             ban_rate=5.1,
+            ranked_tier="Tier 1",
         ),
         Champion(
             name="Champ2",
@@ -34,6 +35,7 @@ def test_lane_based_grouping() -> None:
             win_rate=52.3,
             pick_rate=8.7,
             ban_rate=3.2,
+            ranked_tier="Tier 1",
         ),
         Champion(
             name="Champ3",
@@ -41,6 +43,7 @@ def test_lane_based_grouping() -> None:
             win_rate=54.1,
             pick_rate=9.5,
             ban_rate=4.3,
+            ranked_tier="Tier 1",
         ),
     ]
 
@@ -64,6 +67,7 @@ def test_single_champion() -> None:
         win_rate=55.5,
         pick_rate=10.2,
         ban_rate=5.1,
+        ranked_tier="Tier 1",
     )
 
     champion_iterator = iter([champion])

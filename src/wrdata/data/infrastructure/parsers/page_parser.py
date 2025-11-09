@@ -33,7 +33,10 @@ class PageParser:
     """
 
     def __init__(
-        self, a_driver: WebDriver, a_button: WebElement | None = None
+        self,
+        a_driver: WebDriver,
+        a_button: WebElement | None = None,
+        a_tier: str | None = None,
     ):
         """Initialize a new instance of the PageParser.
 
@@ -46,9 +49,12 @@ class PageParser:
                 browser.
             a_button (WebElement, optional): The WebElement representing the
                 button to click. Defaults to None.
+            a_tier (str, optional): The tier name for champions being parsed.
+                Defaults to None.
         """
         self.__driver = a_driver
         self.__button = a_button
+        self.__tier = a_tier
 
         if a_button is not None:
             ActionChains(a_driver).click(a_button).perform()
@@ -71,12 +77,13 @@ class PageParser:
         """
         try:
             data: list[list[Champion]] = []
-            data.extend(
-                self.__with_button_to_click(
-                    self.__driver, tier_button
+            tier_buttons = self.__get_tier_buttons()
+            for tier_button in tier_buttons:
+                tier_name = self.__parse_tier_name_from_button(tier_button)
+                tier_champions = self.__with_button_to_click(
+                    self.__driver, tier_button, tier_name
                 ).__parse_champions_from_tier()
-                for tier_button in self.__get_tier_buttons()
-            )
+                data.append(tier_champions)
             print(f"Data parsed for date {self.__get_date()}")
             return data
         except NoSuchElementException as e:
@@ -119,10 +126,11 @@ class PageParser:
                 in the current tier.
         """
         data = []
+        tier = cast(str, self.__tier)
         for lane_button in self.__get_lane_buttons():
             data.extend(
                 self.__with_button_to_click(
-                    self.__driver, lane_button
+                    self.__driver, lane_button, tier
                 ).__parse_champions_from_lane()
             )
         return data
@@ -146,11 +154,12 @@ class PageParser:
                 lane's data.
         """
         lane_name = self.__parse_lane_name_from_button()
+        tier = cast(str, self.__tier)
         champions = []
         for list_item in self.__get_data_list_items():
             try:
                 champion = ListItemParser(
-                    lane_name, list_item
+                    lane_name, list_item, tier
                 ).parse_champion()
                 champions.append(champion)
             except (NoSuchElementException, ScrapingError):
@@ -171,6 +180,18 @@ class PageParser:
 
         return lane_button_class[prefix_length:].capitalize()
 
+    def __parse_tier_name_from_button(self, tier_button: WebElement) -> str:
+        """Extract the tier name from the tier button.
+
+        Args:
+            tier_button: The WebElement representing the tier button.
+
+        Returns:
+            str: The tier name extracted from the button text.
+        """
+        tier_text = str(tier_button.get_attribute("innerHTML"))
+        return tier_text.strip()
+
     def __get_data_list_items(self) -> list[WebElement]:
         """Retrieve list items from the data list container.
 
@@ -184,7 +205,7 @@ class PageParser:
 
     @classmethod
     def __with_button_to_click(
-        cls, a_driver: WebDriver, a_button: WebElement
+        cls, a_driver: WebDriver, a_button: WebElement, a_tier: str
     ) -> PageParser:
         """Create a new PageParser instance with a button to click.
 
@@ -196,9 +217,10 @@ class PageParser:
                 browser.
             a_button (WebElement): The WebElement representing the button to
                 click.
+            a_tier (str): The tier name for champions being parsed.
 
         Returns:
             PageParser: A new instance of the PageParser class with the
                 specified WebDriver and button to click.
         """
-        return cls(a_driver, a_button)
+        return cls(a_driver, a_button, a_tier)
