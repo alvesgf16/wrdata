@@ -1,7 +1,6 @@
 """Entry point for the champion data pipeline."""
 
 from ....config.settings import settings
-from ...infrastructure.fetchers.selenium_fetcher import SeleniumFetcher
 from ...infrastructure.parsers.html_parser import HTMLChampionParser
 from ...infrastructure.repositories.csv_repository import CSVChampionRepository
 from .champion_pipeline_handler import ChampionPipelineHandler
@@ -18,12 +17,10 @@ def main() -> None:
     2. Injecting them into the handler
     3. Executing the use case
     """
-    web_fetcher = SeleniumFetcher()
     parser = HTMLChampionParser()
     repository = CSVChampionRepository(filepath="champions.csv")
 
     pipeline = ChampionPipelineHandler(
-        web_fetcher=web_fetcher,
         parser=parser,
         repository=repository,
         source_url=settings.scraping.source_url,
