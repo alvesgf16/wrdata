@@ -6,14 +6,13 @@ for persisting champion data to CSV files.
 """
 
 import csv
-from pathlib import Path
 
 from ....exceptions import OutputError
 from ...domain import Champion
-from ...domain.ports.repositories import ChampionRepository
+from .base_repository import BaseChampionRepository
 
 
-class CSVChampionRepository(ChampionRepository):
+class CSVChampionRepository(BaseChampionRepository):
     """CSV-based implementation of the ChampionRepository port."""
 
     def __init__(self, filepath: str = "champions.csv") -> None:
@@ -22,14 +21,7 @@ class CSVChampionRepository(ChampionRepository):
         Args:
             filepath: The path where the CSV file will be saved.
         """
-        self._filepath = Path(filepath)
-        self._headers = [
-            "Lane",
-            "Champion",
-            "Win Rate",
-            "Pick Rate",
-            "Ban Rate",
-        ]
+        super().__init__(filepath)
 
     def save(self, champions: list[list[Champion]]) -> None:
         """Save champion data to a CSV file.
@@ -44,7 +36,7 @@ class CSVChampionRepository(ChampionRepository):
             OutputError: If there are issues writing to the CSV file.
         """
         try:
-            self._filepath.parent.mkdir(parents=True, exist_ok=True)
+            self._ensure_directory_exists()
 
             flat_champions = [champ for tier in champions for champ in tier]
 
@@ -65,20 +57,3 @@ class CSVChampionRepository(ChampionRepository):
             csv_writer.writerows(
                 [self._serialize_champion(champ) for champ in flat_champions]
             )
-
-    def _serialize_champion(self, champion: Champion) -> list[str | float]:
-        """Serialize a champion to CSV row format.
-
-        Args:
-            champion: The Champion object to serialize.
-
-        Returns:
-            A list containing the champion's data fields.
-        """
-        return [
-            champion.lane.value,
-            champion.name,
-            round(champion.win_rate, 4),
-            round(champion.pick_rate, 4),
-            round(champion.ban_rate, 4),
-        ]

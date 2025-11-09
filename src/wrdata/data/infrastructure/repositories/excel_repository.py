@@ -5,18 +5,16 @@ This module provides a concrete implementation of the ChampionRepository port
 for persisting champion data to Excel workbooks.
 """
 
-from pathlib import Path
-
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ....exceptions import OutputError
 from ...domain import Champion
-from ...domain.ports.repositories import ChampionRepository
+from .base_repository import BaseChampionRepository
 
 
-class ExcelChampionRepository(ChampionRepository):
+class ExcelChampionRepository(BaseChampionRepository):
     """Excel-based implementation of the ChampionRepository port."""
 
     def __init__(self, filepath: str = "champions.xlsx") -> None:
@@ -25,14 +23,7 @@ class ExcelChampionRepository(ChampionRepository):
         Args:
             filepath: The path where the Excel file will be saved.
         """
-        self._filepath = Path(filepath)
-        self._headers = [
-            "Lane",
-            "Champion",
-            "Win Rate",
-            "Pick Rate",
-            "Ban Rate",
-        ]
+        super().__init__(filepath)
         self._tier_names = ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
 
     def save(self, champions: list[list[Champion]]) -> None:
@@ -48,7 +39,7 @@ class ExcelChampionRepository(ChampionRepository):
             OutputError: If there are issues writing to the Excel file.
         """
         try:
-            self._filepath.parent.mkdir(parents=True, exist_ok=True)
+            self._ensure_directory_exists()
 
             workbook = Workbook()
 
@@ -114,20 +105,3 @@ class ExcelChampionRepository(ChampionRepository):
             table.tableStyleInfo = style
 
             worksheet.add_table(table)
-
-    def _serialize_champion(self, champion: Champion) -> list[str | float]:
-        """Serialize a champion to Excel row format.
-
-        Args:
-            champion: The Champion object to serialize.
-
-        Returns:
-            A list containing the champion's data fields.
-        """
-        return [
-            champion.lane.value,
-            champion.name,
-            round(champion.win_rate, 4),
-            round(champion.pick_rate, 4),
-            round(champion.ban_rate, 4),
-        ]
