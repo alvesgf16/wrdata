@@ -196,21 +196,28 @@ class ChampionsAnalyzer:
             tier_str = self.__determine_tier(
                 analyzed_champion.adjusted_win_rate
             )
-            # Convert tier string to Tier enum
-            tier_map = {
-                "S+": Tier.S_PLUS,
-                "S": Tier.S,
-                "A": Tier.A,
-                "B": Tier.B,
-                "C": Tier.C,
-                "D": Tier.D,
-            }
-            # Create new AnalyzedChampion with the tier assigned
-            self.__analyzed_champions[i] = AnalyzedChampion(
-                champion=analyzed_champion.champion,
-                adjusted_win_rate=analyzed_champion.adjusted_win_rate,
-                tier=tier_map.get(tier_str),
+
+            self.__analyzed_champions[i] = self.assign_tier_to_champion(
+                tier_str, analyzed_champion
             )
+
+    def assign_tier_to_champion(
+        self, tier_str: str, analyzed_champion: AnalyzedChampion
+    ) -> AnalyzedChampion:
+        tier_map = {
+            "S+": Tier.S_PLUS,
+            "S": Tier.S,
+            "A": Tier.A,
+            "B": Tier.B,
+            "C": Tier.C,
+            "D": Tier.D,
+        }
+
+        return AnalyzedChampion(
+            champion=analyzed_champion.champion,
+            adjusted_win_rate=analyzed_champion.adjusted_win_rate,
+            tier=tier_map.get(tier_str),
+        )
 
     def __determine_tier(
         self,

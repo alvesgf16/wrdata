@@ -91,9 +91,9 @@ class XlsxWriter(Writer):
         }
 
         worksheet.add_table(
-            0,  # First row
-            0,  # First column
-            len(tier_data),  # Last row
-            len(self._headers) - 1,  # Last column
-            table_options,
+            first_row=0,
+            first_col=0,
+            last_row=len(tier_data),
+            last_col=len(self._headers) - 1,
+            options=table_options,
         )

@@ -154,7 +154,6 @@ class PageParser:
                 ).parse_champion()
                 champions.append(champion)
             except (NoSuchElementException, ScrapingError):
-                # Skip items that can't be parsed (e.g., unrendered templates)
                 continue
         return champions
 

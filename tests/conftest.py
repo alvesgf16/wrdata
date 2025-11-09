@@ -17,10 +17,9 @@ from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
 def mock_driver() -> Mock:
     driver = Mock(spec=WebDriver)
 
-    # Mock date element
-    date_element = Mock()
-    date_element.get_attribute.return_value = "2024-03-15"
-    driver.find_element.return_value = date_element
+    mock_date_element = Mock()
+    mock_date_element.get_attribute.return_value = "2024-03-15"
+    driver.find_element.return_value = mock_date_element
 
     return driver
 
@@ -34,7 +33,6 @@ def mock_lane_button() -> Mock:
 def mock_list_items() -> list[Mock]:
     items = [Mock(spec=WebElement) for _ in range(2)]
 
-    # Mock champion data elements
     for item in items:
         name_element = Mock()
         name_element.get_attribute.return_value = (
@@ -55,7 +53,6 @@ def mock_list_items() -> list[Mock]:
 def sample_champion_data() -> list[AnalyzedChampion]:
     """Create sample champion data for testing."""
     return [
-        # Top Lane Champions
         AnalyzedChampion(
             champion=Champion(
                 name="Darius",
@@ -89,7 +86,6 @@ def sample_champion_data() -> list[AnalyzedChampion]:
             adjusted_win_rate=51.5,
             tier=Tier.B,
         ),
-        # Jungle Lane Champions
         AnalyzedChampion(
             champion=Champion(
                 name="Lee Sin",
@@ -123,7 +119,6 @@ def sample_champion_data() -> list[AnalyzedChampion]:
             adjusted_win_rate=53.0,
             tier=Tier.A,
         ),
-        # Mid Lane Champions
         AnalyzedChampion(
             champion=Champion(
                 name="Yasuo",
@@ -157,7 +152,6 @@ def sample_champion_data() -> list[AnalyzedChampion]:
             adjusted_win_rate=52.0,
             tier=Tier.B,
         ),
-        # Bot Lane Champions (ADCs)
         AnalyzedChampion(
             champion=Champion(
                 name="Jinx",
@@ -191,7 +185,6 @@ def sample_champion_data() -> list[AnalyzedChampion]:
             adjusted_win_rate=52.0,
             tier=Tier.B,
         ),
-        # Support Lane Champions
         AnalyzedChampion(
             champion=Champion(
                 name="Thresh",

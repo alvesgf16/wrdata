@@ -50,5 +50,4 @@ class Settings:
         self.analysis = AnalysisConfig()
 
 
-# Global settings instance
 settings = Settings()

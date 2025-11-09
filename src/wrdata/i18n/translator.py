@@ -66,5 +66,4 @@ class GameTranslator:
         return self._champions.copy()
 
 
-# Global translator instance for convenience
 translator = GameTranslator()

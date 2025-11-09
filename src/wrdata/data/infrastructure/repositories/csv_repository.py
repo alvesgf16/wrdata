@@ -50,24 +50,23 @@ class CSVChampionRepository(ChampionRepository):
             # Flatten the nested list
             flat_champions = [champ for tier in champions for champ in tier]
 
-            # Write to CSV
-            with self._filepath.open(
-                "w", encoding="utf-8", newline=""
-            ) as csv_file:
-                csv_writer = csv.writer(csv_file)
-                csv_writer.writerow(self._headers)
-                csv_writer.writerows(
-                    [
-                        self._serialize_champion(champ)
-                        for champ in flat_champions
-                    ]
-                )
+            self.write_to_csv(flat_champions)
 
         except Exception as e:
             raise OutputError(
                 f"Failed to write champions to CSV file {self._filepath}",
                 details=str(e),
             ) from e
+
+    def write_to_csv(self, flat_champions: list[Champion]) -> None:
+        with self._filepath.open(
+            "w", encoding="utf-8", newline=""
+        ) as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow(self._headers)
+            csv_writer.writerows(
+                [self._serialize_champion(champ) for champ in flat_champions]
+            )
 
     def _serialize_champion(self, champion: Champion) -> list[str | float]:
         """Serialize a champion to CSV row format.

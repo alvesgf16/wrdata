@@ -38,9 +38,11 @@ class HTMLChampionParser(ChampionParser):
         driver: WebDriver | None = None
         try:
             driver = self._webdriver_factory.create_driver()
-            # Load the HTML source into the driver
-            driver.get("data:text/html;charset=utf-8," + source)
+            self.load_html_source_into_driver(source, driver)
             return PageParser(driver).parse_champions()
         finally:
             if driver is not None:
                 driver.quit()
+
+    def load_html_source_into_driver(self, source: str, driver: WebDriver) -> None:
+        driver.get("data:text/html;charset=utf-8," + source)

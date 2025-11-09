@@ -45,7 +45,6 @@ class DataFetcher:
                 driver.get(settings.scraping.source_url)
                 return self._parse_when_ready(driver)
         except ScrapingError:
-            # Re-raise ScrapingError from create_driver
             raise
         except Exception as e:
             raise ScrapingError(

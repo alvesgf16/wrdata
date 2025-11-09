@@ -32,7 +32,6 @@ def process_champions() -> None:
         DataProcessingError: If there are issues processing the champion data
         OutputError: If there are issues writing the output file
     """
-    # Initialize services
     data_fetcher = DataFetcher()
     data_processor = DataProcessor()
     output_service = OutputService()

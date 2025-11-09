@@ -69,7 +69,6 @@ class SeleniumFetcher(WebFetcher):
                 EC.presence_of_element_located(("class-name", "nodata-text"))
             )
         except Exception:
-            # Continue even if wait times out
             pass
 
     def close(self) -> None:
