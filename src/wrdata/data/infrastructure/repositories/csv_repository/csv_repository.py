@@ -7,9 +7,9 @@ for persisting champion data to CSV files.
 
 import csv
 
-from ....exceptions import OutputError
-from ...domain import Champion
-from .base_repository import BaseChampionRepository
+from .....exceptions import OutputError
+from ....domain import Champion
+from ..base_repository import BaseChampionRepository
 
 
 class CSVChampionRepository(BaseChampionRepository):
@@ -35,7 +35,7 @@ class CSVChampionRepository(BaseChampionRepository):
         try:
             self._ensure_directory_exists()
 
-            self.write_to_csv(champions)
+            self._write_to_csv(champions)
 
         except Exception as e:
             raise OutputError(
@@ -43,7 +43,7 @@ class CSVChampionRepository(BaseChampionRepository):
                 details=str(e),
             ) from e
 
-    def write_to_csv(self, champions: list[Champion]) -> None:
+    def _write_to_csv(self, champions: list[Champion]) -> None:
         with self._filepath.open(
             "w", encoding="utf-8", newline=""
         ) as csv_file:
