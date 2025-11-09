@@ -5,11 +5,11 @@ Tests for the data writers.
 from pathlib import Path
 
 import pytest
-from xlsxwriter.exceptions import FileCreateError  # type: ignore
 
 from src.wrdata.adapters.writers.xlsx_writer import XlsxWriter
 from src.wrdata.data import Champion, Lane
 from src.wrdata.domain.models.analyzed_champion import AnalyzedChampion, Tier
+from src.wrdata.exceptions import OutputError
 
 
 def test_xlsx_writer(
@@ -59,14 +59,6 @@ def test_xlsx_writer_file_permissions(test_excel_path: Path) -> None:
     test_excel_path.touch()
     test_excel_path.chmod(0o444)  # Read-only
 
-    # On Windows, we expect OutputError, on Unix systems, FileCreateError
-    import platform
-
-    if platform.system() == "Windows":
-        from src.wrdata.exceptions import OutputError
-
-        with pytest.raises(OutputError):
-            writer.write([[]])
-    else:
-        with pytest.raises(FileCreateError):
-            writer.write([[]])
+    # Expect OutputError for file permission issues
+    with pytest.raises(OutputError):
+        writer.write([[]])

@@ -32,7 +32,7 @@ dependencies = [
     "selenium>=4.25.0",
     "webdriver-manager>=4.0.2",
     "numpy>=2.1.2",
-    "xlsxwriter>=3.2.2",
+    "openpyxl>=3.1.0",
     "requests>=2.32.3",
 ]
 
@@ -112,7 +112,7 @@ strict_equality = true
 module = [
     "selenium.*",
     "webdriver_manager.*",
-    "xlsxwriter.*",
+    "openpyxl.*",
 ]
 ignore_missing_imports = true
 

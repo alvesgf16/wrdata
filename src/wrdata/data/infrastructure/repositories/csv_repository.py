@@ -44,10 +44,8 @@ class CSVChampionRepository(ChampionRepository):
             OutputError: If there are issues writing to the CSV file.
         """
         try:
-            # Ensure parent directory exists
             self._filepath.parent.mkdir(parents=True, exist_ok=True)
 
-            # Flatten the nested list
             flat_champions = [champ for tier in champions for champ in tier]
 
             self.write_to_csv(flat_champions)

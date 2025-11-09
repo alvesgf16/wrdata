@@ -6,14 +6,13 @@ for reading champion data from Excel workbooks.
 """
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any, Sequence
+
+from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 from ...data import Champion, Lane
 from .reader import ChampionReader
-
-if TYPE_CHECKING:
-    from openpyxl.workbook import Workbook
-    from openpyxl.worksheet.worksheet import Worksheet
 
 
 class ExcelChampionReader(ChampionReader):
@@ -51,14 +50,6 @@ class ExcelChampionReader(ChampionReader):
             ValueError: If the Excel data is malformed.
             Exception: For other reading errors.
         """
-        try:
-            from openpyxl import load_workbook
-        except ImportError as e:
-            raise ImportError(
-                "openpyxl is required to read Excel files. "
-                "Install it with: pip install openpyxl"
-            ) from e
-
         if not self._filepath.exists():
             raise FileNotFoundError(f"Excel file not found: {self._filepath}")
 
@@ -81,7 +72,7 @@ class ExcelChampionReader(ChampionReader):
                 f"{self._filepath}: {e}"
             ) from e
 
-    def _read_worksheet(self, sheet: Any) -> list[Champion]:
+    def _read_worksheet(self, sheet: Worksheet) -> list[Champion]:
         """Read champions from a single worksheet.
 
         Args:
@@ -110,11 +101,11 @@ class ExcelChampionReader(ChampionReader):
 
         return champions
 
-    def get_headers(self, sheet: Any) -> list[str]:
+    def get_headers(self, sheet: Worksheet) -> list[Any]:
         return [cell.value for cell in sheet[1]]
 
     def _deserialize_champion(
-        self, headers: list[str], row: tuple[Any, ...]
+        self, headers: Sequence[str], row: Sequence[Any]
     ) -> Champion:
         """Deserialize an Excel row into a Champion object.
 

@@ -7,13 +7,13 @@ for persisting champion data to Excel workbooks.
 
 from pathlib import Path
 
-from xlsxwriter import Workbook  # type: ignore
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ....exceptions import OutputError
 from ...domain import Champion
 from ...domain.ports.repositories import ChampionRepository
-
-TableOptions = dict[str, list[dict[str, str]] | list[list[str | float]]]
 
 
 class ExcelChampionRepository(ChampionRepository):
@@ -48,12 +48,19 @@ class ExcelChampionRepository(ChampionRepository):
             OutputError: If there are issues writing to the Excel file.
         """
         try:
-            # Ensure parent directory exists
             self._filepath.parent.mkdir(parents=True, exist_ok=True)
 
-            with Workbook(self._filepath) as workbook:
-                for tier_name, tier_data in zip(self._tier_names, champions):
-                    self._write_tier_worksheet(workbook, tier_name, tier_data)
+            workbook = Workbook()
+
+            # Remove default sheet
+            if "Sheet" in workbook.sheetnames:
+                default_sheet = workbook["Sheet"]
+                workbook.remove(default_sheet)
+
+            for tier_name, tier_data in zip(self._tier_names, champions):
+                self._write_tier_worksheet(workbook, tier_name, tier_data)
+
+            workbook.save(self._filepath)
 
         except Exception as e:
             raise OutputError(
@@ -75,22 +82,38 @@ class ExcelChampionRepository(ChampionRepository):
             tier_name: The name of the tier worksheet.
             tier_data: List of Champion objects for this tier.
         """
-        worksheet = workbook.add_worksheet(tier_name)
+        worksheet = workbook.create_sheet(title=tier_name)
 
-        table_options: TableOptions = {
-            "columns": [{"header": header} for header in self._headers],
-            "data": [
-                self._serialize_champion(champion) for champion in tier_data
-            ],
-        }
+        # Write headers
+        for col_idx, header in enumerate(self._headers, start=1):
+            worksheet.cell(row=1, column=col_idx, value=header)
 
-        worksheet.add_table(
-            first_row=0,
-            first_col=0,
-            last_row=len(tier_data),
-            last_col=len(self._headers) - 1,
-            options=table_options,
-        )
+        # Write data
+        for row_idx, champion in enumerate(tier_data, start=2):
+            row_data = self._serialize_champion(champion)
+            for col_idx, value in enumerate(row_data, start=1):
+                worksheet.cell(row=row_idx, column=col_idx, value=value)
+
+        # Create table if there's data
+        if tier_data:
+            last_row = len(tier_data) + 1
+            last_col = get_column_letter(len(self._headers))
+
+            table = Table(
+                displayName=f"Table_{tier_name.replace(' ', '_')}",
+                ref=f"A1:{last_col}{last_row}",
+            )
+
+            style = TableStyleInfo(
+                name="TableStyleMedium2",
+                showFirstColumn=False,
+                showLastColumn=False,
+                showRowStripes=True,
+                showColumnStripes=False,
+            )
+            table.tableStyleInfo = style
+
+            worksheet.add_table(table)
 
     def _serialize_champion(self, champion: Champion) -> list[str | float]:
         """Serialize a champion to Excel row format.
