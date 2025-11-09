@@ -41,6 +41,15 @@ class AnalysisConfig:
             self.tier_names = ["S+", "S", "A", "B", "C"]
 
 
+@dataclass
+class ReaderConfig:
+    """Configuration for data reading."""
+
+    reader_type: str = "csv"  # Options: "csv", "excel"
+    csv_filepath: str = "champions.csv"
+    excel_filepath: str = "wrdata.xlsx"
+
+
 class Settings:
     """Application settings container."""
 
@@ -48,6 +57,7 @@ class Settings:
         self.scraping = ScrapingConfig()
         self.output = OutputConfig()
         self.analysis = AnalysisConfig()
+        self.reader = ReaderConfig()
 
 
 settings = Settings()

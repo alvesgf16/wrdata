@@ -6,12 +6,14 @@ for reading champion data from Excel workbooks.
 """
 
 from pathlib import Path
-from typing import Any
-
-from openpyxl import load_workbook  # type: ignore
+from typing import TYPE_CHECKING, Any
 
 from ...data import Champion, Lane
 from .reader import ChampionReader
+
+if TYPE_CHECKING:
+    from openpyxl.workbook import Workbook
+    from openpyxl.worksheet.worksheet import Worksheet
 
 
 class ExcelChampionReader(ChampionReader):
@@ -20,6 +22,9 @@ class ExcelChampionReader(ChampionReader):
     Reads champion data from Excel workbooks and reconstructs Champion
     objects organized by tier. This reader is designed to work with Excel
     files created by ExcelChampionRepository.
+
+    Requires openpyxl to be installed. If not installed, will raise
+    ImportError when attempting to read.
     """
 
     def __init__(self, filepath: str = "champions.xlsx") -> None:
@@ -41,10 +46,19 @@ class ExcelChampionReader(ChampionReader):
             inner list represents champions from one worksheet (tier).
 
         Raises:
+            ImportError: If openpyxl is not installed.
             FileNotFoundError: If the Excel file doesn't exist.
             ValueError: If the Excel data is malformed.
             Exception: For other reading errors.
         """
+        try:
+            from openpyxl import load_workbook
+        except ImportError as e:
+            raise ImportError(
+                "openpyxl is required to read Excel files. "
+                "Install it with: pip install openpyxl"
+            ) from e
+
         if not self._filepath.exists():
             raise FileNotFoundError(f"Excel file not found: {self._filepath}")
 

@@ -7,8 +7,9 @@ between various services to handle web scraping, data processing, and output
 generation.
 """
 
+from ..adapters.readers.reader_factory import ChampionReaderFactory
 from ..adapters.service import OutputService
-from ..data.infrastructure.fetchers.data_fetcher import DataFetcher
+from ..data import main as run_data_pipeline
 from ..domain.data_processor import DataProcessor
 from ..domain.models.analyzed_champion import AnalyzedChampion
 from ..exceptions import DataProcessingError, OutputError, ScrapingError
@@ -19,28 +20,38 @@ def process_champions() -> None:
 
     This function orchestrates the complete workflow of champion data
     processing:
-    1. Fetches champion data from the source URL
-    2. Updates metrics for each tier of champions
-    3. Saves the processed data to an Excel file
+    1. Runs the data pipeline to scrape and save champions to CSV
+    2. Reads champion data using the configured reader (CSV or Excel)
+    3. Updates metrics for each tier of champions
+    4. Saves the processed data to an Excel file
 
-    The champions are processed in tiers, and their metrics are updated
-    based on their respective lanes. The final data is written to an Excel
-    file using the available writers.
+    The reader type is determined by the application settings. Champions
+    are processed in tiers, and their metrics are updated based on their
+    respective lanes. The final data is written to an Excel file using the
+    available writers.
 
     Raises:
         ScrapingError: If there are issues fetching data from the source
         DataProcessingError: If there are issues processing the champion data
         OutputError: If there are issues writing the output file
     """
-    data_fetcher = DataFetcher()
+    # Use factory to create reader based on configuration
+    champion_reader = ChampionReaderFactory.create_reader()
     data_processor = DataProcessor()
     output_service = OutputService()
 
     try:
-        champions_by_tier = data_fetcher.fetch_champions()
+        run_data_pipeline()
     except Exception as e:
         raise ScrapingError(
             "Failed to fetch champion data from source", details=str(e)
+        ) from e
+
+    try:
+        champions_by_tier = champion_reader.read()
+    except Exception as e:
+        raise ScrapingError(
+            "Failed to read champion data from CSV", details=str(e)
         ) from e
 
     try:
