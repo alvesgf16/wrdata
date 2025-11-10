@@ -67,19 +67,26 @@ class ExcelChampionRepository(BaseChampionRepository):
         return worksheet
 
     def _write_headers(self, worksheet: Worksheet) -> None:
-        HEADER_ROW_INDEX = 1
+        FIRST_COLUMN_INDEX = 1
 
         for column_index, header in enumerate(
-            self._headers, start=HEADER_ROW_INDEX
+            self._headers, start=FIRST_COLUMN_INDEX
         ):
             worksheet.cell(
-                row=HEADER_ROW_INDEX, column=column_index, value=header
+                row=FIRST_COLUMN_INDEX, column=column_index, value=header
             )
 
     def _write_data(
         self, champions: list[Champion], worksheet: Worksheet
     ) -> None:
-        for row_index, champion in enumerate(champions, start=2):
+        FIRST_DATA_ROW_INDEX = 2
+        FIRST_COLUMN_INDEX = 1
+
+        for row_index, champion in enumerate(
+            champions, start=FIRST_DATA_ROW_INDEX
+        ):
             row_data = self._serialize_champion(champion)
-            for column_index, value in enumerate(row_data, start=1):
+            for column_index, value in enumerate(
+                row_data, start=FIRST_COLUMN_INDEX
+            ):
                 worksheet.cell(row=row_index, column=column_index, value=value)
