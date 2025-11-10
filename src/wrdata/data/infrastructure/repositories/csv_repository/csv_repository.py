@@ -6,10 +6,23 @@ for persisting champion data to CSV files.
 """
 
 import csv
+from typing import Protocol, Sequence, TextIO
 
 from .....exceptions import OutputError
 from ....domain import Champion
 from ..base_repository import BaseChampionRepository
+
+
+class _CSVWriter(Protocol):
+    """Protocol for csv.writer type."""
+
+    def writerow(self, row: Sequence[str | float]) -> None:
+        """Write a single row."""
+        ...
+
+    def writerows(self, rows: Sequence[Sequence[str | float]]) -> None:
+        """Write multiple rows."""
+        ...
 
 
 class CSVChampionRepository(BaseChampionRepository):
@@ -35,7 +48,7 @@ class CSVChampionRepository(BaseChampionRepository):
         try:
             self._ensure_directory_exists()
 
-            self._write_to_csv(champions)
+            self._write(champions)
 
         except Exception as e:
             raise OutputError(
@@ -43,12 +56,24 @@ class CSVChampionRepository(BaseChampionRepository):
                 details=str(e),
             ) from e
 
-    def _write_to_csv(self, champions: list[Champion]) -> None:
+    def _write(self, champions: list[Champion]) -> None:
         with self._filepath.open(
             "w", encoding="utf-8", newline=""
         ) as csv_file:
-            csv_writer = csv.writer(csv_file)
-            csv_writer.writerow(self._headers)
-            csv_writer.writerows(
-                [self._serialize_champion(champ) for champ in champions]
-            )
+            csv_writer = self._create_writer(csv_file)
+
+            self._write_headers(csv_writer)
+            self._write_data(champions, csv_writer)
+
+    def _create_writer(self, csv_file: TextIO) -> _CSVWriter:
+        return csv.writer(csv_file)
+
+    def _write_headers(self, csv_writer: _CSVWriter) -> None:
+        csv_writer.writerow(self._headers)
+
+    def _write_data(
+        self, champions: list[Champion], csv_writer: _CSVWriter
+    ) -> None:
+        csv_writer.writerows(
+            [self._serialize_champion(champ) for champ in champions]
+        )
