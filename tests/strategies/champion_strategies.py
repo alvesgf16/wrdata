@@ -78,6 +78,24 @@ def champion_strategy(
         def test_top_lane_diamond(champion):
             pass
     """
+    # Generate rates and round to 4 decimal places to match CSV storage
+    # This ensures the Champion objects match what gets persisted
+    generated_win_rate = (
+        win_rate
+        if win_rate is not None
+        else round(draw(st.floats(min_value=0.0, max_value=1.0)), 4)
+    )
+    generated_pick_rate = (
+        pick_rate
+        if pick_rate is not None
+        else round(draw(st.floats(min_value=0.0, max_value=1.0)), 4)
+    )
+    generated_ban_rate = (
+        ban_rate
+        if ban_rate is not None
+        else round(draw(st.floats(min_value=0.0, max_value=1.0)), 4)
+    )
+
     return Champion(
         name=(
             name
@@ -85,21 +103,9 @@ def champion_strategy(
             else draw(st.sampled_from(list(CHAMPIONS.values())))
         ),
         lane=lane if lane is not None else draw(st.sampled_from(Lane)),
-        win_rate=(
-            win_rate
-            if win_rate is not None
-            else draw(st.floats(min_value=0.0, max_value=1.0))
-        ),
-        pick_rate=(
-            pick_rate
-            if pick_rate is not None
-            else draw(st.floats(min_value=0.0, max_value=1.0))
-        ),
-        ban_rate=(
-            ban_rate
-            if ban_rate is not None
-            else draw(st.floats(min_value=0.0, max_value=1.0))
-        ),
+        win_rate=generated_win_rate,
+        pick_rate=generated_pick_rate,
+        ban_rate=generated_ban_rate,
         ranked_tier=(
             ranked_tier
             if ranked_tier is not None
